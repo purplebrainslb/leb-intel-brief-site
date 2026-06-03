@@ -73,7 +73,7 @@ export default function Home() {
               Regional
             </TabsTrigger>
             <TabsTrigger value="outlook" className="text-xs sm:text-sm">
-              30-Day
+              30 Days Outlook
             </TabsTrigger>
           </TabsList>
 
