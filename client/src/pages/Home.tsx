@@ -136,7 +136,7 @@ export default function Home() {
   const totalItems = counts.critical + counts.high + counts.medium + counts.low;
 
   const relative = formatRelative(briefingData.lastUpdated, now);
-  const beirutTime = formatBeirutTime(briefingData.lastUpdated);
+  const currentBeirutTime = formatBeirutTime(new Date(now).toISOString());
 
   return (
     <div className="min-h-screen text-foreground intel-backdrop">
@@ -165,10 +165,10 @@ export default function Home() {
               <div className="hidden md:flex items-center gap-2 text-[11px] font-mono text-slate-400">
                 <Clock className="w-3.5 h-3.5" />
                 <span>
-                  {beirutTime} <span className="text-slate-500">BEY</span>
+                  {currentBeirutTime} <span className="text-slate-500">BEY</span>
                 </span>
                 <span className="text-slate-600">·</span>
-                <span>{relative}</span>
+                <span>Updated {relative}</span>
               </div>
             </div>
           </div>
@@ -178,15 +178,23 @@ export default function Home() {
       <main className="relative container py-6 sm:py-10">
         {/* HERO — Key Insights */}
         <section className="relative">
-          <div className="flex flex-col gap-2 mb-5 sm:mb-7">
-            <div className="flex items-center gap-2 text-[11px] uppercase tracking-[0.18em] font-mono text-cyan-300/90">
-              <span className="inline-block w-6 h-px bg-cyan-300/60" />
-              Today's Brief · {briefingData.date}
+          <div className="flex flex-col gap-3 mb-5 sm:mb-7">
+            <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+              <span className="flex items-center gap-2 text-[11px] uppercase tracking-[0.18em] font-mono text-cyan-300/90">
+                <span className="inline-block w-6 h-px bg-cyan-300/60" />
+                Today's Brief
+              </span>
+              <span className="font-mono font-medium text-white tracking-tight text-xl sm:text-2xl lg:text-3xl">
+                {briefingData.date}
+              </span>
             </div>
             <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
               <h2 className="text-2xl sm:text-4xl lg:text-5xl font-bold text-white tracking-tight leading-[1.05]">
                 Key Insights
-                <span className="block font-serif italic text-slate-400 text-lg sm:text-2xl mt-1">
+                <span
+                  className="block text-slate-400 text-base sm:text-lg mt-2"
+                  style={{ fontFamily: "Verdana, Geneva, sans-serif" }}
+                >
                   what mattered in the previous 24 hours
                 </span>
               </h2>
