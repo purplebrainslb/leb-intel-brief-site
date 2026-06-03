@@ -1,6 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AlertCircle, TrendingUp, MapPin, Clock, AlertTriangle, Info } from "lucide-react";
 import { briefingData } from "@/data/briefing";
 import { useState } from "react";
@@ -20,7 +21,7 @@ const assessmentColors = {
 };
 
 export default function Home() {
-  const [expandedSection, setExpandedSection] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState("judgments");
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950">
@@ -49,57 +50,79 @@ export default function Home() {
         </div>
       </header>
 
-      <main className="container max-w-6xl mx-auto px-4 py-8 space-y-8">
-        {/* Key Judgments Section */}
-        <section className="space-y-4">
-          <div className="flex items-center gap-3 mb-6">
-            <AlertCircle className="w-6 h-6 text-red-400" />
-            <h2 className="text-3xl font-bold text-white">Key Judgments</h2>
-          </div>
+      <main className="container max-w-6xl mx-auto px-4 py-8">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          {/* Tab Navigation */}
+          <TabsList className="grid w-full grid-cols-4 lg:grid-cols-7 gap-2 mb-8 bg-slate-900/50 border border-slate-800 p-2 rounded-lg">
+            <TabsTrigger value="judgments" className="text-xs sm:text-sm">
+              Key Judgments
+            </TabsTrigger>
+            <TabsTrigger value="international" className="text-xs sm:text-sm">
+              International
+            </TabsTrigger>
+            <TabsTrigger value="military" className="text-xs sm:text-sm">
+              Military
+            </TabsTrigger>
+            <TabsTrigger value="government" className="text-xs sm:text-sm">
+              Government
+            </TabsTrigger>
+            <TabsTrigger value="humanitarian" className="text-xs sm:text-sm">
+              Humanitarian
+            </TabsTrigger>
+            <TabsTrigger value="regional" className="text-xs sm:text-sm">
+              Regional
+            </TabsTrigger>
+            <TabsTrigger value="outlook" className="text-xs sm:text-sm">
+              30-Day
+            </TabsTrigger>
+          </TabsList>
 
-          <div className="grid gap-4">
-            {briefingData.keyJudgments.map((judgment) => (
-              <Card key={judgment.id} className={`border ${severityColors[judgment.severity as keyof typeof severityColors]} bg-slate-900/50 hover:bg-slate-900/70 transition-colors cursor-pointer`}>
-                <CardHeader className="pb-3">
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="flex-1">
-                      <CardTitle className="text-lg text-white">{judgment.title}</CardTitle>
-                      <Badge variant="outline" className="mt-2 bg-slate-800/50">
-                        {judgment.region}
-                      </Badge>
+          {/* Key Judgments Tab */}
+          <TabsContent value="judgments" className="space-y-4">
+            <div className="flex items-center gap-3 mb-6">
+              <AlertCircle className="w-6 h-6 text-red-400" />
+              <h2 className="text-3xl font-bold text-white">Key Judgments</h2>
+            </div>
+
+            <div className="grid gap-4">
+              {briefingData.keyJudgments.map((judgment) => (
+                <Card key={judgment.id} className={`border ${severityColors[judgment.severity as keyof typeof severityColors]} bg-slate-900/50 hover:bg-slate-900/70 transition-colors`}>
+                  <CardHeader className="pb-3">
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex-1">
+                        <CardTitle className="text-lg text-white">{judgment.title}</CardTitle>
+                        <Badge variant="outline" className="mt-2 bg-slate-800/50">
+                          {judgment.region}
+                        </Badge>
+                      </div>
+                      <div className="text-2xl">
+                        {judgment.severity === "critical" && "🔴"}
+                        {judgment.severity === "high" && "🟠"}
+                        {judgment.severity === "medium" && "🟡"}
+                        {judgment.severity === "low" && "🔵"}
+                      </div>
                     </div>
-                    <div className="text-2xl">
-                      {judgment.severity === "critical" && "🔴"}
-                      {judgment.severity === "high" && "🟠"}
-                      {judgment.severity === "medium" && "🟡"}
-                      {judgment.severity === "low" && "🔵"}
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-slate-300 leading-relaxed">{judgment.description}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </section>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-slate-300 leading-relaxed">{judgment.description}</p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </TabsContent>
 
-        <Separator className="bg-slate-800" />
-
-        {/* Detailed Sections */}
-        {briefingData.sections.map((section) => (
-          <section key={section.id} className="space-y-4">
-            <div className="flex items-center gap-3 mb-6 cursor-pointer" onClick={() => setExpandedSection(expandedSection === section.id ? null : section.id)}>
+          {/* International Tab */}
+          <TabsContent value="international" className="space-y-4">
+            <div className="flex items-center gap-3 mb-6">
               <TrendingUp className="w-6 h-6 text-blue-400" />
-              <div className="flex-1">
-                <h2 className="text-2xl font-bold text-white">{section.title}</h2>
-                <p className="text-slate-400 text-sm">{section.subtitle}</p>
+              <div>
+                <h2 className="text-3xl font-bold text-white">International Conflict Overview</h2>
+                <p className="text-slate-400 text-sm">Last 24 hours</p>
               </div>
-              <span className="text-slate-400 text-sm">{section.items.length} updates</span>
             </div>
 
             <div className="grid gap-3">
-              {section.items.map((item, idx) => (
+              {briefingData.sections[0].items.map((item, idx) => (
                 <Card key={idx} className={`border-l-4 ${item.severity ? severityColors[item.severity as keyof typeof severityColors] : "border-slate-700"} bg-slate-900/50 hover:bg-slate-900/70 transition-colors`}>
                   <CardHeader className="pb-2">
                     <div className="flex items-start justify-between gap-4">
@@ -115,34 +138,148 @@ export default function Home() {
                 </Card>
               ))}
             </div>
+          </TabsContent>
 
-            <Separator className="bg-slate-800 mt-8" />
-          </section>
-        ))}
+          {/* Military Tab */}
+          <TabsContent value="military" className="space-y-4">
+            <div className="flex items-center gap-3 mb-6">
+              <TrendingUp className="w-6 h-6 text-orange-400" />
+              <div>
+                <h2 className="text-3xl font-bold text-white">Lebanon – Military Situation</h2>
+                <p className="text-slate-400 text-sm">Last 24 hours</p>
+              </div>
+            </div>
 
-        {/* 30-Day Outlook */}
-        <section className="space-y-4">
-          <div className="flex items-center gap-3 mb-6">
-            <TrendingUp className="w-6 h-6 text-purple-400" />
-            <h2 className="text-3xl font-bold text-white">30-Day Outlook</h2>
-          </div>
+            <div className="grid gap-3">
+              {briefingData.sections[1].items.map((item, idx) => (
+                <Card key={idx} className={`border-l-4 ${item.severity ? severityColors[item.severity as keyof typeof severityColors] : "border-slate-700"} bg-slate-900/50 hover:bg-slate-900/70 transition-colors`}>
+                  <CardHeader className="pb-2">
+                    <div className="flex items-start justify-between gap-4">
+                      <CardTitle className="text-base text-white">{item.heading}</CardTitle>
+                      <Badge variant="secondary" className="text-xs bg-slate-800 text-slate-300 shrink-0">
+                        {item.source}
+                      </Badge>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-slate-300 text-sm leading-relaxed">{item.content}</p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </TabsContent>
 
-          <div className="grid gap-4 md:grid-cols-2">
-            {briefingData.outlook30Days.map((outlook, idx) => (
-              <Card key={idx} className={`border-l-4 ${assessmentColors[outlook.assessment as keyof typeof assessmentColors]} bg-slate-900/50 hover:bg-slate-900/70 transition-colors`}>
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-lg text-white">{outlook.category}</CardTitle>
-                  <Badge className="w-fit mt-2 bg-slate-800/50 text-slate-200">
-                    {outlook.assessment}
-                  </Badge>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-slate-300 text-sm leading-relaxed">{outlook.description}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </section>
+          {/* Government Tab */}
+          <TabsContent value="government" className="space-y-4">
+            <div className="flex items-center gap-3 mb-6">
+              <TrendingUp className="w-6 h-6 text-purple-400" />
+              <div>
+                <h2 className="text-3xl font-bold text-white">Lebanon – Government, LAF, Internal Security</h2>
+                <p className="text-slate-400 text-sm">Last 24 hours</p>
+              </div>
+            </div>
+
+            <div className="grid gap-3">
+              {briefingData.sections[2].items.map((item, idx) => (
+                <Card key={idx} className={`border-l-4 ${item.severity ? severityColors[item.severity as keyof typeof severityColors] : "border-slate-700"} bg-slate-900/50 hover:bg-slate-900/70 transition-colors`}>
+                  <CardHeader className="pb-2">
+                    <div className="flex items-start justify-between gap-4">
+                      <CardTitle className="text-base text-white">{item.heading}</CardTitle>
+                      <Badge variant="secondary" className="text-xs bg-slate-800 text-slate-300 shrink-0">
+                        {item.source}
+                      </Badge>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-slate-300 text-sm leading-relaxed">{item.content}</p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </TabsContent>
+
+          {/* Humanitarian Tab */}
+          <TabsContent value="humanitarian" className="space-y-4">
+            <div className="flex items-center gap-3 mb-6">
+              <AlertTriangle className="w-6 h-6 text-yellow-400" />
+              <div>
+                <h2 className="text-3xl font-bold text-white">Humanitarian / Economic Situation</h2>
+                <p className="text-slate-400 text-sm">Last 24 hours</p>
+              </div>
+            </div>
+
+            <div className="grid gap-3">
+              {briefingData.sections[3].items.map((item, idx) => (
+                <Card key={idx} className={`border-l-4 ${item.severity ? severityColors[item.severity as keyof typeof severityColors] : "border-slate-700"} bg-slate-900/50 hover:bg-slate-900/70 transition-colors`}>
+                  <CardHeader className="pb-2">
+                    <div className="flex items-start justify-between gap-4">
+                      <CardTitle className="text-base text-white">{item.heading}</CardTitle>
+                      <Badge variant="secondary" className="text-xs bg-slate-800 text-slate-300 shrink-0">
+                        {item.source}
+                      </Badge>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-slate-300 text-sm leading-relaxed">{item.content}</p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </TabsContent>
+
+          {/* Regional Tab */}
+          <TabsContent value="regional" className="space-y-4">
+            <div className="flex items-center gap-3 mb-6">
+              <MapPin className="w-6 h-6 text-green-400" />
+              <div>
+                <h2 className="text-3xl font-bold text-white">Regional Developments Directly Affecting Lebanon</h2>
+                <p className="text-slate-400 text-sm">Last 24 hours</p>
+              </div>
+            </div>
+
+            <div className="grid gap-3">
+              {briefingData.sections[4].items.map((item, idx) => (
+                <Card key={idx} className={`border-l-4 ${item.severity ? severityColors[item.severity as keyof typeof severityColors] : "border-slate-700"} bg-slate-900/50 hover:bg-slate-900/70 transition-colors`}>
+                  <CardHeader className="pb-2">
+                    <div className="flex items-start justify-between gap-4">
+                      <CardTitle className="text-base text-white">{item.heading}</CardTitle>
+                      <Badge variant="secondary" className="text-xs bg-slate-800 text-slate-300 shrink-0">
+                        {item.source}
+                      </Badge>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-slate-300 text-sm leading-relaxed">{item.content}</p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </TabsContent>
+
+          {/* 30-Day Outlook Tab */}
+          <TabsContent value="outlook" className="space-y-4">
+            <div className="flex items-center gap-3 mb-6">
+              <TrendingUp className="w-6 h-6 text-purple-400" />
+              <h2 className="text-3xl font-bold text-white">30-Day Outlook</h2>
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-2">
+              {briefingData.outlook30Days.map((outlook, idx) => (
+                <Card key={idx} className={`border-l-4 ${assessmentColors[outlook.assessment as keyof typeof assessmentColors]} bg-slate-900/50 hover:bg-slate-900/70 transition-colors`}>
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-lg text-white">{outlook.category}</CardTitle>
+                    <Badge className="w-fit mt-2 bg-slate-800/50 text-slate-200">
+                      {outlook.assessment}
+                    </Badge>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-slate-300 text-sm leading-relaxed">{outlook.description}</p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </TabsContent>
+        </Tabs>
 
         {/* Footer */}
         <section className="mt-12 pt-8 border-t border-slate-800">
