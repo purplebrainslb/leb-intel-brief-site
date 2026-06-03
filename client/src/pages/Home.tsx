@@ -187,7 +187,7 @@ export default function Home() {
               <h2 className="text-2xl sm:text-4xl lg:text-5xl font-bold text-white tracking-tight leading-[1.05]">
                 Key Insights
                 <span className="block font-serif italic text-slate-400 text-lg sm:text-2xl mt-1">
-                  what matters in the next 24 hours
+                  what mattered in the previous 24 hours
                 </span>
               </h2>
               <SeverityLegend counts={counts} total={totalItems} />
