@@ -55,7 +55,7 @@ export default function Home() {
           {/* Tab Navigation */}
           <TabsList className="grid w-full grid-cols-7 gap-2 mb-8 bg-slate-900/50 border border-slate-800 p-2 rounded-lg overflow-x-auto">
             <TabsTrigger value="judgments" className="text-xs sm:text-sm">
-              Key Judgments
+              Key Insights
             </TabsTrigger>
             <TabsTrigger value="international" className="text-xs sm:text-sm">
               International
@@ -81,7 +81,7 @@ export default function Home() {
           <TabsContent value="judgments" className="space-y-4">
             <div className="flex items-center gap-3 mb-6">
               <AlertCircle className="w-6 h-6 text-red-400" />
-              <h2 className="text-3xl font-bold text-white">Key Judgments</h2>
+              <h2 className="text-3xl font-bold text-white">Key Insights</h2>
             </div>
 
             <div className="grid gap-4">
