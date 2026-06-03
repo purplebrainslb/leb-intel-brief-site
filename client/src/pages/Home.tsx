@@ -53,7 +53,7 @@ export default function Home() {
       <main className="container max-w-6xl mx-auto px-4 py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           {/* Tab Navigation */}
-          <TabsList className="grid w-full grid-cols-4 lg:grid-cols-7 gap-2 mb-8 bg-slate-900/50 border border-slate-800 p-2 rounded-lg">
+          <TabsList className="grid w-full grid-cols-7 gap-2 mb-8 bg-slate-900/50 border border-slate-800 p-2 rounded-lg overflow-x-auto">
             <TabsTrigger value="judgments" className="text-xs sm:text-sm">
               Key Judgments
             </TabsTrigger>
