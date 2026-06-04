@@ -1,228 +1,256 @@
 {
   "date": "June 4, 2026",
   "location": "Beirut, Lebanon",
-  "lastUpdated": "2026-06-04T04:30:00Z",
+  "lastUpdated": "2026-06-04T07:00:00.000Z",
   "keyJudgments": [
     {
-      "title": "US-Brokered Ceasefire Agreement Reached",
-      "description": "Following the fourth round of US-mediated trilateral talks in Washington on June 2–3, Israel and Lebanon agreed to implement a ceasefire. The deal is contingent on a complete cessation of Hezbollah fire and the evacuation of all Hezbollah operatives from the South Litani Sector. A joint US-Israel-Lebanon statement was issued by the State Department.",
+      "id": "kj-1",
+      "title": "Israel-Lebanon Ceasefire Agreement Reached in Washington",
+      "description": "After the fourth round of US-brokered talks at the State Department (June 2–3), Israel and Lebanon agreed to renew their fragile ceasefire and create 'pilot' security zones in southern Lebanon from which Hezbollah would be banned. The agreement is contingent on a complete cessation of Hezbollah fire and evacuation of all operatives south of the Litani River. Next talks scheduled for June 22.",
       "severity": "critical",
-      "region": "National / Washington"
+      "region": "DIPLOMATIC"
     },
     {
-      "title": "Israeli Strikes Continue Despite Ceasefire — 9 Killed",
-      "description": "Even as talks concluded in Washington, Israeli forces struck at least 10 vehicles across southern Lebanon on June 3, killing 9 people including two paramedics and a Lebanese Army soldier. A drone strike hit the Khaldeh coastal road just south of Beirut, injuring two. Total Lebanese death toll since March 2 stands at 3,516 killed and 10,674 wounded.",
+      "id": "kj-2",
+      "title": "Hezbollah Rejects Ceasefire Terms, Continues Attacks",
+      "description": "Hezbollah Political Council member Mahmoud Qamati told the BBC: 'There was no ceasefire agreement.' The group insists it will not abide by any commitments made at the Washington talks, demands a complete halt to all Israeli operations and full IDF withdrawal from Lebanon. Hezbollah fired rockets at IDF troops in northern Israel on June 3 — the first such attack since June 1.",
       "severity": "critical",
-      "region": "South Lebanon / Beirut Outskirts"
+      "region": "MILITARY"
     },
     {
-      "title": "Ceasefire Contingent on Full Hezbollah Dismantlement — Israel",
-      "description": "Israeli Ambassador to Washington Yechiel Leiter stated the ceasefire is 'entirely contingent on a complete cessation of fire towards Israel, and the complete dismantling of Hezbollah.' Israel reserved the right to strike throughout Lebanon, including Beirut, if any violation occurs. Israeli officials told Channel 13 that strikes on Beirut may come 'in the coming days.'",
+      "id": "kj-3",
+      "title": "Nine Killed in Southern Lebanon Airstrikes; 3,516 Dead Since March",
+      "description": "Israeli strikes hit approximately 20 locations across southern Lebanon on June 4, killing at least nine people including two paramedics whose ambulance was directly targeted in the Chehour area. A Lebanese army soldier was also killed near Nabatieh. Lebanon's health ministry has now recorded 3,516 deaths since the start of the war in March.",
       "severity": "critical",
-      "region": "National"
+      "region": "SOUTH LEBANON"
     },
     {
-      "title": "Iran Warns: Attack on Beirut Triggers Full-Scale War Resumption",
-      "description": "Iranian Foreign Minister Abbas Araghchi warned that any Israeli attack on Beirut would trigger a 'full-scale resumption of war.' He stated: 'Either the war stops in Iran and Lebanon, or it won't stop, neither in Iran nor in Lebanon.' Iran's nuclear talks with the US showed 'no tangible progress,' with enriched uranium stockpiles remaining the central sticking point.",
+      "id": "kj-4",
+      "title": "IRGC Strikes Kuwait Airport; One Killed, 63 Injured",
+      "description": "Iranian IRGC drones struck Kuwait International Airport's Terminal 1 on June 4, killing one person and injuring at least 63 others. The attack followed US strikes on Qeshm Island after Iran targeted a blockade-violating tanker. Trump says US-Iran talks are going 'very well' and a deal could come 'over the weekend,' but Iran's FM says 'no tangible progress' has been made.",
+      "severity": "critical",
+      "region": "GULF/REGIONAL"
+    },
+    {
+      "id": "kj-5",
+      "title": "IDF Deepens Southern Lebanon Ground Operation; No Ceasefire for Forces",
+      "description": "IDF Chief of Staff Zamir stated 'there is no ceasefire for our forces' in Lebanon on June 4. Golani Brigade held a command handover ceremony at Beaufort Castle — captured last Sunday — marking the IDF's deepest advance into Lebanon in 25 years. The IDF reports killing over 2,500 Hezbollah operatives since March, including hundreds from the elite Radwan Force.",
       "severity": "high",
-      "region": "Regional / Tehran"
+      "region": "SOUTH LEBANON"
     },
     {
-      "title": "Pilot Security Zones: New Framework Introduced",
-      "description": "The joint statement introduces 'pilot zones' — experimental security areas in south Lebanon as the first phase of new security arrangements. The US is pushing for Lebanese Armed Forces to expand deployment and assume greater security responsibilities across all Lebanese territory, independent of Hezbollah. A sixth round of negotiations is expected in approximately 10 days.",
+      "id": "kj-6",
+      "title": "Lebanon Economy Faces 7–10% GDP Contraction; Reserves Draining",
+      "description": "Finance Minister Jaber projects the war could shrink Lebanon's GDP by 7–10% in 2026, with direct and indirect damage reaching $20 billion. Foreign reserves fell from $12.07B in mid-February to $11.43B by end of April — a $640M drain in 10 weeks. The Lebanese pound holds near 89,500 to the dollar but the stability is described as artificially managed.",
       "severity": "high",
-      "region": "South Lebanon"
-    },
-    {
-      "title": "France Pledges €550M; Special Envoy Arrives in Beirut",
-      "description": "French special envoy Jean-Yves Le Drian arrived in Beirut on June 3 as France seeks to restore its diplomatic role. Paris pledged €550 million ($672M) to support Lebanese economic reforms. France also restricted Israeli participation at the Eurosatory 2026 defence exhibition (June 15–19) amid growing diplomatic tensions.",
-      "severity": "medium",
-      "region": "Beirut / Paris"
-    },
-    {
-      "title": "Humanitarian Crisis: 1M+ Displaced, 13,500 Pregnant Women Among Them",
-      "description": "More than 1 million people remain displaced across Lebanon, including 132,000 in 633 collective sites. The UN reports 13,500 pregnant women are displaced, with 1,500 expected to give birth imminently. Lebanon's Economy Minister estimates $2 billion in losses from Israel's escalation. The EBRD projects Lebanon's GDP to contract 2% in 2026.",
-      "severity": "high",
-      "region": "National"
+      "region": "ECONOMY"
     }
   ],
   "sections": [
     {
       "sectionKey": "international",
-      "title": "International Conflict Overview",
-      "subtitle": "Last 24 hours",
+      "title": "International & Diplomatic",
+      "subtitle": "US-brokered talks, global response",
       "items": [
         {
-          "heading": "US-Iran Gulf Clashes Test Fragile Ceasefire",
-          "content": "The US-Iran ceasefire declared in late May continued to be tested overnight as both sides traded new strikes across the Gulf. Iran struck Kuwait's main international airport, setting it ablaze and killing one person, while also hitting targets in Bahrain. The US said its ceasefire with Iran is 'still holding' despite the continued violence. Iran's FM Araghchi said 'no tangible progress' has been made in nuclear talks with Washington.",
-          "source": "Al Jazeera / Reuters",
-          "severity": "critical"
-        },
-        {
-          "heading": "US House Passes Iran War Powers Resolution",
-          "content": "In a rare pushback against President Trump, the US House of Representatives passed an Iran war powers resolution. Secretary of State Rubio told Congress he was hopeful for a joint Israel-Lebanon statement and an action plan on a 'track for security in Lebanon, independent from Hezbollah.'",
-          "source": "Al Jazeera / AP",
+          "heading": "Fourth US-Brokered Trilateral Talks Produce Ceasefire Agreement",
+          "content": "The US convened the fourth high-level trilateral meeting between Israeli and Lebanese representatives on June 2–3 at the State Department. The resulting joint statement announced agreement on ceasefire implementation contingent on Hezbollah's complete cessation of fire and evacuation from south of the Litani River. 'Pilot' security zones under exclusive Lebanese army control were agreed in principle. Next meeting set for June 22.",
+          "source": "State Dept.",
           "severity": "high"
         },
         {
-          "heading": "Trump Confirms Calling Netanyahu 'Crazy' Over Lebanon War",
-          "content": "President Trump confirmed in a media interview that he called Israeli Prime Minister Netanyahu 'crazy' in reference to the Lebanon conflict. Netanyahu downplayed the row, saying both leaders agree on disarming Hezbollah. Trump also said he 'would like to meet' Iranian Supreme Leader Khamenei.",
-          "source": "Naharnet / Reuters",
+          "heading": "Trump Confirms He Called Netanyahu 'Crazy' Over Lebanon Strikes",
+          "content": "Trump confirmed he sharply criticized Netanyahu in an expletive-laden call, saying he was 'a little bit perturbed at his constantly fighting with Lebanon.' Trump said he told Netanyahu: 'Bibi, we've got to stop this.' Netanyahu acknowledged 'tactical disagreements' but said they 'always find a way to resolve them.' Trump is concerned Lebanon escalation could jeopardize a broader US-Iran deal.",
+          "source": "NY Post/CNBC",
           "severity": "medium"
         },
         {
-          "heading": "Germany Fails UN Security Council Bid Amid Israel Stance",
-          "content": "Germany failed to secure a UN Security Council seat, receiving only 104 of the required two-thirds majority votes. Germany's Foreign Minister acknowledged that its support for Israel 'may have cost votes.' A former UN official attributed the failure to Germany's 'scandalous support for genocide in Palestine and aggression against Iran.'",
-          "source": "Al Jazeera",
-          "severity": "low"
+          "heading": "US House Passes Resolution to Halt Iran War",
+          "content": "The US House of Representatives passed a war powers resolution to halt Trump's military campaign against Iran, with four Republicans joining Democrats. The vote is largely symbolic as the Senate would need to concur and Trump would veto. The vote reflects growing congressional opposition and is a public rebuke of the president's Iran policy.",
+          "source": "Reuters",
+          "severity": "medium"
+        },
+        {
+          "heading": "Iran Insists Lebanon Ceasefire Must Be Part of US Deal",
+          "content": "Iranian FM Araghchi stated communications with the US remain open but 'no tangible progress' has been made. Iran continues to demand that any deal with the US include a complete halt to Israeli operations in Lebanon and full IDF withdrawal. Tehran warned that any attack on Beirut would trigger a 'full-scale resumption' of the war.",
+          "source": "Tasnim/DW",
+          "severity": "high"
+        },
+        {
+          "heading": "OECD Cuts Global Growth Forecast Amid War Fallout",
+          "content": "The OECD revised global growth downward to 2.8% if Gulf oil exports normalize in Q3, but warned growth could fall to 2.1% in 2026 and 1.8% in 2027 if the war continues into next year. Oil prices eased on June 4 as the Israel-Lebanon ceasefire agreement boosted hopes for a broader deal to end the West Asia war.",
+          "source": "OECD/Reuters",
+          "severity": "medium"
         }
       ]
     },
     {
       "sectionKey": "military",
-      "title": "Lebanon – Military Situation",
-      "subtitle": "Last 24 hours",
+      "title": "Military & Security",
+      "subtitle": "Ground operations, strikes, Hezbollah activity",
       "items": [
         {
-          "heading": "Israeli Drone Strikes South Lebanon and Beirut Outskirts",
-          "content": "Israeli forces struck at least 10 vehicles across south Lebanon on June 3. A drone hit the Khaldeh coastal road at the southern entrance to Beirut, injuring two. Strikes near Tyre killed 6 people. An ambulance in Chehour was directly targeted, killing two paramedics. A Lebanese Army soldier was killed on a road in the south. This morning (June 4), an Israeli drone struck a car between Kfar Kila and Zefta in south Lebanon.",
-          "source": "Naharnet / Lebanese Health Ministry / Al Jazeera",
+          "heading": "IDF Strikes ~20 Locations in Southern Lebanon",
+          "content": "Israeli forces struck approximately 20 locations across southern Lebanon on June 4, issuing evacuation warnings for several villages before attacks. Strikes hit the Nabatieh area, Chehour, al-Housh near Tyre, and a highway south of Beirut (Khaldeh). IDF Chief Zamir reiterated: 'There is no ceasefire for our forces' in Lebanon.",
+          "source": "NNA/IDF",
           "severity": "critical"
         },
         {
-          "heading": "Hezbollah Fires Rockets at Northern Israel; IDF Intercepts",
-          "content": "Hezbollah confirmed firing rockets at a gathering of Israeli troops near the Marj pond in northern Israel. The Israeli military said it intercepted two projectiles and a 'hostile aircraft' from Lebanon. A suspicious aerial target was identified over Kfar Yuval in northern Israel early on June 4, with warning sirens activated. Israel's ambassador accused Hezbollah of violating understandings through the Kiryat Shmona rocket fire.",
-          "source": "Naharnet / IDF / Hezbollah statement",
+          "heading": "Two Paramedics Killed in Ambulance Strike; Lebanese Army Soldier Killed",
+          "content": "Two paramedics from the Risala Scouts Association (Amal-affiliated) were killed and a third seriously wounded when Israeli forces 'directly targeted' their ambulance in the Chehour area. Lebanon's health ministry accused Israel of 'contempt for international humanitarian law.' At least 128 healthcare workers have been killed in Israeli attacks since March. A Lebanese army soldier was also killed near Nabatieh.",
+          "source": "Health Ministry",
+          "severity": "critical"
+        },
+        {
+          "heading": "Hezbollah Fires Rockets at IDF Troops; Claims Beaufort Castle Drone",
+          "content": "Hezbollah fired a 'salvo of rockets' at IDF soldiers in Qantara, southern Lebanon, and launched drones at troops near Beaufort Castle — the first attacks since June 1. Israel intercepted a drone and two projectiles. Hezbollah published FPV drone footage of the castle. IDF held a Golani Brigade command handover ceremony at Beaufort Castle, marking the deepest Israeli advance in 25 years.",
+          "source": "IDF/Hezbollah",
+          "severity": "critical"
+        },
+        {
+          "heading": "IDF Has Killed Over 2,500 Hezbollah Operatives Since March",
+          "content": "The IDF reports killing over 2,500 Hezbollah operatives since March 2, including hundreds from the elite Radwan Force. Hezbollah has fired approximately 5,500 rockets at IDF troops in southern Lebanon and ~2,500 at Israel itself, with 75 rocket impact sites recorded in Israel. The IDF believes Hezbollah retains thousands of short-range rockets and hundreds of longer-range projectiles.",
+          "source": "IDF",
           "severity": "high"
         },
         {
-          "heading": "Israel Seizes Beaufort Castle; Deepest Advance in 25 Years",
-          "content": "Israeli forces have seized Beaufort Castle in southern Lebanon, marking their deepest advance into Lebanese territory in more than 25 years. Israel widened its ground assault last week and pushed further north. Netanyahu ordered strikes on Beirut suburbs before pausing — the first strikes on Beirut since the April ceasefire.",
-          "source": "DW / NYT / Al Jazeera",
-          "severity": "critical"
-        },
-        {
-          "heading": "Israel Orders Tyre Christian Neighbourhood to Expel Hezbollah",
-          "content": "The Israeli military issued an order to a Christian neighbourhood in Tyre demanding residents expel Hezbollah operatives or face evacuation orders. The move reflects Israel's strategy of pressuring local communities to enforce Hezbollah withdrawal from civilian areas ahead of the pilot security zones framework.",
-          "source": "Naharnet",
+          "heading": "Lebanese Army Denounces 'Pattern of Deliberate Strikes' on Its Forces",
+          "content": "The Lebanese army said two of its soldiers were injured in a separate Israeli strike on their vehicle on the Deir Zahrani–Nabatieh road. The army denounced what it called 'a pattern of deliberate strikes targeting army personnel, vehicles and positions' by Israeli forces. The Lebanese army has been deploying to the Christian district of Tyre to demonstrate Hezbollah's absence.",
+          "source": "Lebanese Army",
           "severity": "high"
         }
       ]
     },
     {
       "sectionKey": "government",
-      "title": "Lebanon – Government, LAF, Internal Security",
-      "subtitle": "Last 24 hours",
+      "title": "Government & Politics",
+      "subtitle": "Lebanese state, political developments",
       "items": [
         {
-          "heading": "Lebanese Delegation Insists on Ceasefire First in Washington Talks",
-          "content": "Lebanese presidency sources told Al-Arabiya that the Lebanese delegation's insistence on a ceasefire before any other arrangements prevented early progress in negotiations. The US suggested a 'gradual Israeli withdrawal' framework. A Lebanese official told Al Jazeera that discussions were 'advanced' with US understanding of the Lebanese approach. A phased ceasefire was expected from today's talks.",
-          "source": "Naharnet / Al-Arabiya / Al Jazeera",
+          "heading": "Lebanon Participates in Washington Talks; Rejects Foreign Hostage-Taking",
+          "content": "Lebanese Ambassador Nada Hamadeh participated in the fourth round of US-mediated talks alongside Israeli Ambassador Yechiel Leiter. The joint statement affirmed that 'the future of the relationship between Israel and Lebanon must be decided by the two sovereign governments' and rejected 'any attempt, by any state or non-state actor, to hold Lebanon's future hostage' — a direct reference to Iran and Hezbollah.",
+          "source": "State Dept.",
           "severity": "high"
         },
         {
-          "heading": "President Aoun Condemns Iranian Attacks on Kuwait and Bahrain",
-          "content": "Lebanese President Joseph Aoun issued a formal condemnation of Iranian attacks on Kuwait and Bahrain, signalling Beirut's effort to maintain diplomatic distance from Iran's Gulf operations even as Tehran remains deeply involved in Lebanon's conflict dynamics.",
-          "source": "Naharnet",
+          "heading": "PM Salam Pushes Banking Reform Legislation Amid IMF Pressure",
+          "content": "Prime Minister Nawaf Salam's government is attempting to advance draft legislation to address Lebanon's banking sector collapse, estimated at a financial deficit exceeding $70 billion. The IMF has called for comprehensive bank restructuring, a medium-term fiscal framework, and a debt treatment plan. Commercial banks, depositors, and independent economists all object to the current approach for different reasons.",
+          "source": "Media Line",
           "severity": "medium"
         },
         {
-          "heading": "US Pushes for LAF Expansion Across All Lebanese Territory",
-          "content": "A US State Department source told MTV Lebanon that Washington believes a sustainable solution lies in strengthening the Lebanese Armed Forces — enhancing capabilities, training, and expanding deployment across all Lebanese territory to assume greater security responsibilities independent of Hezbollah. The sixth round of negotiations is expected in approximately 10 days.",
-          "source": "MTV Lebanon / Naharnet",
+          "heading": "US Treasury Sanctions Lebanese Security Officials for Hezbollah Ties",
+          "content": "The US Treasury Department recently sanctioned Brig. Gen. Khattar Nassereddine (head of security analysis, General Security Directorate) and Col. Samer Hamadeh (Army Intelligence) for allegedly leaking state intelligence to Hezbollah and obstructing disarmament. The Lebanese Army Command stressed its officers are loyal solely to the state. Political factions aligned with Hezbollah condemned the sanctions as 'political blackmail.'",
+          "source": "US Treasury",
           "severity": "high"
         },
         {
-          "heading": "UN Chief Proposes Options After UNIFIL Withdrawal",
-          "content": "UN Secretary-General António Guterres proposed options to help end the Lebanon conflict following the scheduled departure of UNIFIL peacekeepers. The UN daily press briefing confirmed that Blue Helmets observed ongoing hostilities along the Blue Line despite the ceasefire framework. The UN stressed that international humanitarian law strictly prohibits targeting civilian objects.",
-          "source": "UN / Naharnet",
+          "heading": "Lebanon Faces FATF Grey List Pressure; Finance Minister Warns of Black List Risk",
+          "content": "Lebanon remains under increased FATF monitoring, placing pressure on correspondent banking relationships. Finance Minister Jaber warned: 'Lebanon has become a cash economy, and the real question is whether we want to stay on the grey list, or sleepwalk into a black list.' The Compliance Shield partnership between BDL, commercial banks, and Salim Khalil Financial Company is credited with reducing extreme exchange-rate fluctuations.",
+          "source": "Media Line",
           "severity": "medium"
         }
       ]
     },
     {
       "sectionKey": "humanitarian",
-      "title": "Humanitarian / Economic Situation",
-      "subtitle": "Last 24 hours",
+      "title": "Humanitarian",
+      "subtitle": "Displacement, casualties, aid access",
       "items": [
         {
-          "heading": "Over 1 Million Displaced; 13,500 Pregnant Women in Crisis",
-          "content": "More than 1 million people remain displaced across Lebanon, with 132,000 sheltering in 633 collective sites. The UN reports 13,500 pregnant women are among the displaced, with 1,500 expected to give birth imminently. Families in southern Lebanon continue to flee as attacks escalate. The IRC called for a sustained ceasefire to enable safe returns.",
-          "source": "UN / IRC / ReliefWeb",
+          "heading": "Death Toll Reaches 3,516; Over One Million Displaced",
+          "content": "Lebanon's health ministry reports 3,516 people killed by Israeli attacks since the war began in March. The UN reports more than one million people have registered as displaced. Israeli evacuation orders now cover more than one-eighth of Lebanese territory. The figures do not distinguish between combatants and civilians.",
+          "source": "Health Ministry/UN",
           "severity": "critical"
         },
         {
-          "heading": "Lebanon Economy Estimated to Contract 2% in 2026; $2B in Losses",
-          "content": "Lebanon's Economy Minister Amer Bisat told Al Jazeera that Lebanon has lost an estimated $2 billion due to Israel's escalation. The EBRD projects Lebanon's GDP to contract 2% in 2026 before rebounding to 4% in 2027. Lebanon's central bank governor projected a 7–10% GDP contraction in a worst-case scenario. The Lebanese pound has remained relatively stable despite the economic shock.",
-          "source": "Al Jazeera / EBRD / The Media Line",
+          "heading": "Beirut Waterfront Displacement Camp: Thousands in Tents Without Basic Services",
+          "content": "Thousands of displaced people are living in tents along Beirut's waterfront with limited access to food, clean water, and bathrooms. Resident Mariam Hessa (23) told the BBC: 'I want the ceasefire to be for all Lebanon, not just for an area like Dahieh or even the south. No, it's for all Lebanon. We need this.' Collective shelters in Tyre and Saida are reported full.",
+          "source": "BBC",
+          "severity": "critical"
+        },
+        {
+          "heading": "128 Healthcare Workers Killed; WFP Struggles to Deliver Aid",
+          "content": "At least 128 paramedics and healthcare workers have been killed in Israeli attacks on ambulances and medical facilities since March. The World Food Programme is struggling to deliver aid amid ongoing bombardments. The health ministry accused Israel of demonstrating 'contempt for international humanitarian law' following the ambulance strike in Chehour.",
+          "source": "Health Ministry/WFP",
+          "severity": "critical"
+        },
+        {
+          "heading": "War Damage Estimated at $20 Billion; World Bank Reconstruction Needs at $11 Billion",
+          "content": "Finance Minister Jaber projects total direct and indirect economic damage from the current conflict could reach $20 billion. The World Bank's assessment of the 2024 hostilities alone estimated $3.4 billion in physical damage, $5.1 billion in direct economic losses, and $11 billion in total recovery and reconstruction needs — costs that now compound with 2026 damage.",
+          "source": "World Bank/Finance Ministry",
           "severity": "high"
-        },
-        {
-          "heading": "MSF Reports Significant Damage to Tyre Hospital After Israeli Airstrike",
-          "content": "Médecins Sans Frontières reported death, injury and significant damage following an Israeli airstrike in Sour (Tyre). An earlier strike on June 1 damaged a hospital in Tyre, killing at least four people and injuring over 120. The Global R2P Atrocity Alert flagged the incident as a potential violation of international humanitarian law.",
-          "source": "MSF / Global R2P",
-          "severity": "critical"
-        },
-        {
-          "heading": "France Pledges €550M for Lebanese Economic Recovery",
-          "content": "France pledged €550 million ($672M) to support economic reforms in Lebanon. French special envoy Jean-Yves Le Drian arrived in Beirut on June 3 to coordinate recovery efforts. The ICC announced a new dispute resolution initiative to support Lebanon's economic recovery. The CSIS is hosting Lebanon's Economy Minister Amer Bisat on June 8 for a discussion on navigating Lebanon's troubled economic recovery.",
-          "source": "Al Jazeera / ICC / CSIS",
-          "severity": "medium"
         }
       ]
     },
     {
       "sectionKey": "regional",
-      "title": "Regional Developments Directly Affecting Lebanon",
-      "subtitle": "Last 24 hours",
+      "title": "Regional Developments",
+      "subtitle": "Iran, Gulf, broader Middle East",
       "items": [
         {
-          "heading": "Iran Attacks Kuwait and Bahrain; Gulf Ceasefire Under Strain",
-          "content": "Iran struck Kuwait's international airport and targets in Bahrain on June 3, setting the airport ablaze and killing at least one person. The UAE called for a united Gulf stance. Netanyahu said Iran is 'playing with fire.' A Khamenei adviser vowed a 'deluge of missiles' if the US launches a new attack on Iran. The US-Iran ceasefire is described as 'still holding' but severely tested.",
-          "source": "Al Jazeera / Reuters / Naharnet",
+          "heading": "IRGC Strikes Kuwait Airport; One Killed, 63 Injured",
+          "content": "Iranian IRGC drones struck Kuwait International Airport's Terminal 1 on June 4, killing one person and injuring at least 63 others. Kuwait Airways resumed flights from Terminal 4 after severe damage to Terminal 1. Kuwait's Foreign Ministry said the country 'reserves the right to respond' and will 'neither accept nor tolerate' such attacks. The strike was retaliation for US strikes on Qeshm Island.",
+          "source": "DW/Reuters",
           "severity": "critical"
         },
         {
+          "heading": "US Strikes Qeshm Island After Iran Targets Blockade-Violating Tanker",
+          "content": "US CENTCOM conducted self-defense strikes against drone ground control stations on Qeshm Island after Iranian forces launched attack drones at civilian ships in the Persian Gulf. US forces intercepted three drones. Iran also claimed anti-ship missile attacks on the Liberia-flagged MSC Panaya. The US previously disabled the Botswana-flagged M/T Lexie tanker transiting toward Iran's Kharg Island.",
+          "source": "CENTCOM",
+          "severity": "critical"
+        },
+        {
+          "heading": "Iran's Ghalibaf Takes Executive Role; Pezeshkian Reportedly Sidelined",
+          "content": "Iranian Parliament Speaker Ghalibaf convened the Central Bank governor and key ministers to coordinate economic policy toward China — an unusual executive-level function for a parliament speaker. ISW-CTP assesses that President Pezeshkian has been sidelined, with IRGC officials gaining dominance. Ghalibaf's appointment as Special Representative for China Affairs on May 17 carries a different 'level of authority' than previous such roles.",
+          "source": "ISW/CTP",
+          "severity": "medium"
+        },
+        {
+          "heading": "Iran Tries to Normalize Strait of Hormuz Control During Ceasefire",
+          "content": "ISW-CTP assesses Iran is using the ceasefire period to normalize de facto control over the Strait of Hormuz. The US-sanctioned Persian Gulf Strait Authority continues posting data on ships requesting Iranian permission to transit. Iran is prioritizing 'legitimacy' of its sovereignty claims over toll collection. 85 Iranian parliamentarians called for ICBM development in a letter to Supreme Leader Khamenei.",
+          "source": "ISW/CTP",
+          "severity": "high"
+        },
+        {
           "heading": "Saudi Arabia Conducts Intensive Contacts in Washington to Back Lebanon Talks",
-          "content": "Al Jadeed reported intensive Saudi contacts in Washington aimed at securing the success of the Lebanon-Israel negotiations. Saudi Arabia's involvement signals Riyadh's interest in a stable Lebanon as part of broader Gulf normalisation dynamics.",
-          "source": "Al Jadeed / Naharnet",
+          "content": "Al Jadeed reported intensive Saudi contacts in Washington aimed at securing the success of the Lebanon-Israel negotiations. Saudi Arabia's involvement signals Riyadh's interest in a stable Lebanon as part of broader Gulf normalisation dynamics. Qatar is also mediating in parallel with Washington talks.",
+          "source": "Al Jadeed/Al Jazeera",
           "severity": "medium"
-        },
-        {
-          "heading": "Qatar Mediating Alongside Washington on Lebanon Ceasefire",
-          "content": "Al Jazeera's Ali Hashem reported that mediation efforts are also taking place in Qatar in parallel with Washington talks. Qatari involvement adds a second diplomatic track to the ceasefire process, with the next 24 hours described as 'very crucial.'",
-          "source": "Al Jazeera",
-          "severity": "medium"
-        },
-        {
-          "heading": "France Restricts Israeli Participation at Eurosatory 2026 Defence Show",
-          "content": "The French government imposed restrictions on Israeli participation at the Eurosatory 2026 international defence exhibition (June 15–19), amid growing diplomatic tensions over Israel's military operations in Lebanon and Gaza. French PM Lecornu condemned the expansion of Israeli military operations, stating 'nothing can justify' them.",
-          "source": "Aeromorning / Instagram / Naharnet",
-          "severity": "low"
         }
       ]
     }
   ],
   "outlook30Days": [
     {
-      "category": "Battlefield",
-      "assessment": "More Likely to Deteriorate",
-      "description": "Despite the ceasefire agreement, Israel has reserved the right to strike throughout Lebanon including Beirut if any Hezbollah violation occurs. Israeli officials have signalled strikes on Beirut may come within days. Hezbollah has not publicly accepted the ceasefire terms, and continued rocket fire from Lebanon into northern Israel makes further Israeli escalation highly probable within the 30-day window."
-    },
-    {
-      "category": "Politics",
-      "assessment": "Unchanged/Impasse",
-      "description": "The ceasefire framework introduces pilot security zones and a phased approach, but the fundamental gap remains: Lebanon insists on a full ceasefire first, while Israel insists on Hezbollah's complete dismantlement as a precondition. A sixth round of talks in approximately 10 days may produce incremental progress, but a comprehensive political settlement remains distant."
-    },
-    {
-      "category": "Humanitarian",
-      "assessment": "Unchanged/Deteriorating",
-      "description": "With over 1 million displaced and continued Israeli strikes, the humanitarian situation is unlikely to improve materially in the near term. The ceasefire agreement, if it holds, could allow some returns in the south, but the pilot security zones framework will restrict civilian movement. The economic contraction of 2–10% GDP will compound humanitarian pressures through the summer."
-    },
-    {
-      "category": "Regional Escalation",
+      "category": "Ceasefire Durability",
       "assessment": "Elevated Risk",
-      "description": "Iran's attacks on Kuwait and Bahrain signal a willingness to expand the conflict beyond Lebanon and Gaza. Iran's warning that an attack on Beirut will trigger 'full-scale resumption of war' creates a direct tripwire. The US-Iran nuclear talks showing 'no tangible progress' on enriched uranium stockpiles means the broader regional conflict framework remains unresolved and volatile."
+      "description": "The June 4 ceasefire agreement is structurally fragile. Hezbollah has explicitly rejected its terms and continues to fire rockets and drones. Israel's military leadership has stated there is 'no ceasefire for our forces.' The next round of talks on June 22 will be critical, but the gap between Israeli demands (Hezbollah disarmament) and Hezbollah's demands (full IDF withdrawal) remains unbridgeable in the near term."
+    },
+    {
+      "category": "IDF Ground Operation",
+      "assessment": "More Likely to Deteriorate",
+      "description": "The IDF continues to expand its ground operation in southern Lebanon, now holding Beaufort Castle — the deepest advance in 25 years. With Hezbollah maintaining rocket and drone attacks, Israel is likely to continue pressing its military campaign regardless of diplomatic agreements. Further advances toward the Litani River cannot be ruled out."
+    },
+    {
+      "category": "US-Iran Nuclear Talks",
+      "assessment": "Unchanged/Impasse",
+      "description": "Trump claims talks are going 'very well' and a deal could come 'over the weekend,' but Iran's FM says 'no tangible progress' has been made. Iran continues to link any deal to a halt of Israeli operations in Lebanon — a condition the US and Israel reject. The Gulf military exchanges (Qeshm strikes, Kuwait airport attack) risk derailing talks entirely."
+    },
+    {
+      "category": "Lebanon Humanitarian Situation",
+      "assessment": "Unchanged/Deteriorating",
+      "description": "With 3,516 dead, one million displaced, and evacuation orders covering one-eighth of the country, the humanitarian situation continues to worsen. Collective shelters are full, the WFP faces delivery constraints, and healthcare infrastructure is under sustained attack. No significant improvement is expected without a durable, comprehensive ceasefire."
+    },
+    {
+      "category": "Lebanon Economic Outlook",
+      "assessment": "More Likely to Deteriorate",
+      "description": "Foreign reserves are draining at ~$64M per week. GDP contraction of 7–10% is projected for 2026. Banking reform legislation remains stalled. FATF grey-list pressure threatens correspondent banking relationships. The Lebanese pound's apparent stability masks deepening structural damage. Without a ceasefire and international reconstruction funding, the economic trajectory is sharply negative."
+    },
+    {
+      "category": "Regional Spillover Risk",
+      "assessment": "Elevated Risk",
+      "description": "Iran's strikes on Kuwait airport signal willingness to attack Gulf states hosting US forces. The IRGC's normalization of Strait of Hormuz control and ongoing maritime harassment pose risks to global energy supply chains. If US-Iran talks collapse, a rapid escalation across multiple fronts — Lebanon, Gulf, Strait of Hormuz — is plausible within the 30-day window."
     }
   ]
 }
