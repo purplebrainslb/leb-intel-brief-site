@@ -5,3 +5,9 @@
 - [x] Resolve merge conflicts from upgrade (Home.tsx, vite.config.ts)
 - [x] Run db:push to sync user schema to database
 - [x] Verify server starts correctly and all tests pass
+- [x] Database schema for briefings (briefs, key_judgments, brief_sections, section_items, outlook_items)
+- [x] DB helpers and tRPC procedures to read latest brief
+- [x] POST /api/scheduled/update-brief endpoint for agent cron to push new briefs
+- [x] Frontend wired to read from DB (with fallback to static data if no DB brief exists)
+- [ ] Update "War intelligence brief" schedule (from original task or Management UI) to add Step B: POST to /api/scheduled/update-brief
+- [ ] Run manual test (Run Now) to confirm POST reaches the site and homepage shows DB-backed brief

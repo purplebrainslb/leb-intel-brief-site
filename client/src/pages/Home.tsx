@@ -1,4 +1,5 @@
 import { useAuth } from "@/_core/hooks/useAuth";
+import { trpc } from "@/lib/trpc";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -15,7 +16,7 @@ import {
   Radio,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
-import { briefingData } from "@/data/briefing";
+import { briefingData as staticBriefingData } from "@/data/briefing";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -79,21 +80,41 @@ const tabs: TabDef[] = [
   { value: "outlook", label: "30-Day Outlook", shortLabel: "Outlook", icon: TrendingUp, accent: "text-fuchsia-300" },
 ];
 
-const sectionIndexByTab: Record<string, number> = {
-  international: 0,
-  military: 1,
-  government: 2,
-  humanitarian: 3,
-  regional: 4,
+// Map sectionKey from DB to tab value (they should match, but this is a safety net)
+const sectionKeyToTab: Record<string, string> = {
+  international: "international",
+  "lebanon-military": "military",
+  military: "military",
+  "lebanon-government": "government",
+  government: "government",
+  humanitarian: "humanitarian",
+  regional: "regional",
 };
 
-function getSeverityCounts() {
+function normalizeBriefData(raw: any) {
+  if (!raw) return null;
+  // Normalize sections: map sectionKey → tab value
+  const sections = (raw.sections ?? []).map((s: any) => ({
+    ...s,
+    id: sectionKeyToTab[s.sectionKey] ?? s.sectionKey,
+  }));
+  return {
+    date: raw.date,
+    location: raw.location,
+    lastUpdated: raw.lastUpdated,
+    keyJudgments: raw.keyJudgments ?? [],
+    sections,
+    outlook30Days: raw.outlook30Days ?? [],
+  };
+}
+
+function getSeverityCounts(data: typeof staticBriefingData) {
   const counts: Record<Severity, number> = { critical: 0, high: 0, medium: 0, low: 0 };
-  for (const j of briefingData.keyJudgments) {
-    counts[j.severity as Severity]++;
+  for (const j of data.keyJudgments) {
+    if (j.severity) counts[j.severity as Severity]++;
   }
-  for (const section of briefingData.sections) {
-    for (const item of section.items) {
+  for (const section of data.sections) {
+    for (const item of (section as any).items ?? []) {
       if (item.severity) counts[item.severity as Severity]++;
     }
   }
@@ -125,9 +146,17 @@ function formatRelative(iso: string, nowMs: number) {
 }
 
 export default function Home() {
-  // The userAuth hooks provides authentication state
-  // To implement login/logout functionality, simply call logout() or redirect to getLoginUrl()
-  let { user, loading, error, isAuthenticated, logout } = useAuth();
+  useAuth(); // ensure auth context is initialised
+
+  const { data: dbBrief, isLoading } = trpc.briefs.latest.useQuery(undefined, {
+    staleTime: 5 * 60 * 1000, // 5 min
+    retry: false,
+  });
+
+  const briefingData = useMemo(() => {
+    const normalized = normalizeBriefData(dbBrief);
+    return normalized ?? staticBriefingData;
+  }, [dbBrief]);
 
   const [activeTab, setActiveTab] = useState<string>("international");
   const [now, setNow] = useState<number>(() => Date.now());
@@ -137,11 +166,21 @@ export default function Home() {
     return () => clearInterval(t);
   }, []);
 
-  const counts = useMemo(getSeverityCounts, []);
+  const counts = useMemo(() => getSeverityCounts(briefingData as any), [briefingData]);
   const totalItems = counts.critical + counts.high + counts.medium + counts.low;
 
   const relative = formatRelative(briefingData.lastUpdated, now);
   const currentBeirutTime = formatBeirutTime(new Date(now).toISOString());
+
+  // Build a lookup from tab value → section
+  const sectionByTab = useMemo(() => {
+    const map: Record<string, any> = {};
+    for (const section of briefingData.sections) {
+      const key = (section as any).id ?? (section as any).sectionKey;
+      if (key) map[key] = section;
+    }
+    return map;
+  }, [briefingData]);
 
   return (
     <div className="min-h-screen text-foreground intel-backdrop">
@@ -181,6 +220,13 @@ export default function Home() {
       </header>
 
       <main className="relative container py-6 sm:py-10">
+        {/* Loading shimmer */}
+        {isLoading && (
+          <div className="absolute inset-0 pointer-events-none z-10 flex items-start justify-end p-4">
+            <span className="text-[11px] font-mono text-slate-500 animate-pulse">Fetching latest brief…</span>
+          </div>
+        )}
+
         {/* HERO — Key Insights */}
         <section className="relative">
           <div className="flex flex-col gap-3 mb-5 sm:mb-7">
@@ -208,9 +254,9 @@ export default function Home() {
           </div>
 
           <div className="grid gap-3 sm:gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {briefingData.keyJudgments.map((j, idx) => (
+            {briefingData.keyJudgments.map((j: any, idx: number) => (
               <InsightCard
-                key={j.id}
+                key={j.id ?? idx}
                 title={j.title}
                 description={j.description}
                 severity={j.severity as Severity}
@@ -259,8 +305,8 @@ export default function Home() {
 
             <div className="mt-5 sm:mt-7">
               {tabs.slice(0, 5).map((t) => {
-                const sectionIdx = sectionIndexByTab[t.value];
-                const section = briefingData.sections[sectionIdx];
+                const section = sectionByTab[t.value];
+                if (!section) return null;
                 return (
                   <TabsContent key={t.value} value={t.value} className="m-0 outline-none">
                     <AnimatePresence mode="wait">
@@ -276,10 +322,10 @@ export default function Home() {
                           accent={t.accent}
                           title={section.title}
                           subtitle={section.subtitle}
-                          count={section.items.length}
+                          count={(section.items ?? []).length}
                         />
                         <div className="grid gap-2.5 sm:gap-3">
-                          {section.items.map((item, idx) => (
+                          {(section.items ?? []).map((item: any, idx: number) => (
                             <NewsRow
                               key={`${t.value}-${idx}`}
                               heading={item.heading}
@@ -313,7 +359,7 @@ export default function Home() {
                       count={briefingData.outlook30Days.length}
                     />
                     <div className="grid gap-3 sm:grid-cols-2">
-                      {briefingData.outlook30Days.map((o, idx) => (
+                      {briefingData.outlook30Days.map((o: any, idx: number) => (
                         <OutlookCard
                           key={idx}
                           category={o.category}
@@ -463,7 +509,7 @@ function SectionHeader({
   icon: LucideIcon;
   accent: string;
   title: string;
-  subtitle?: string;
+  subtitle?: string | null;
   count: number;
 }) {
   return (
