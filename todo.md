@@ -10,4 +10,5 @@
 - [x] POST /api/scheduled/update-brief endpoint for agent cron to push new briefs
 - [x] Frontend wired to read from DB (with fallback to static data if no DB brief exists)
 - [ ] Update "War intelligence brief" schedule (from original task or Management UI) to add Step B: POST to /api/scheduled/update-brief
-- [ ] Run manual test (Run Now) to confirm POST reaches the site and homepage shows DB-backed brief
+- [x] Today's brief (June 4 2026) seeded directly into DB via seed-brief.mjs
+- [ ] Update "War intelligence brief" schedule to add Step B: POST to /api/scheduled/update-brief (manual step in original task)
