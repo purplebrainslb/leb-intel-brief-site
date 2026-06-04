@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
 import { publishBrief, type BriefPayload } from "./db";
-import { ENV } from "./_core/env";
+import { sdk } from "./_core/sdk";
 
 /**
  * POST /api/scheduled/update-brief
@@ -8,23 +8,22 @@ import { ENV } from "./_core/env";
  * Called by the scheduled agent task each morning. The agent researches
  * Lebanon news and POSTs a fully-structured brief payload.
  *
- * Authentication: static secret key via X-Brief-Secret header.
- * The key is stored in the BRIEF_UPDATE_SECRET environment variable.
+ * Authentication: Manus platform cron cookie (app_session_id JWT).
+ * The sdk.authenticateRequest() verifies the cookie and sets user.isCron = true.
+ * The agent injects $SCHEDULED_TASK_COOKIE as the app_session_id cookie.
  */
 export async function updateBriefHandler(req: Request, res: Response) {
   try {
-    // Authenticate via static secret key
-    const providedSecret = req.headers["x-brief-secret"];
-    const expectedSecret = ENV.briefUpdateSecret;
-
-    if (!expectedSecret) {
-      console.error("[Scheduled] BRIEF_UPDATE_SECRET env var not configured");
-      return res.status(500).json({ error: "Server misconfiguration: secret not set" });
+    // Authenticate via Manus platform cron cookie
+    let user;
+    try {
+      user = await sdk.authenticateRequest(req);
+    } catch {
+      return res.status(403).json({ error: "Forbidden: invalid or missing cron session" });
     }
 
-    if (!providedSecret || providedSecret !== expectedSecret) {
-      console.warn("[Scheduled] update-brief: invalid or missing X-Brief-Secret header");
-      return res.status(403).json({ error: "Forbidden: invalid secret" });
+    if (!user.isCron) {
+      return res.status(403).json({ error: "Forbidden: cron-only endpoint" });
     }
 
     const payload = req.body as BriefPayload;

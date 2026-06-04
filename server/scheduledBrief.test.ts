@@ -5,14 +5,16 @@ vi.mock("./db", () => ({
   publishBrief: vi.fn().mockResolvedValue(1),
 }));
 
-// Mock the ENV
-vi.mock("./_core/env", () => ({
-  ENV: {
-    briefUpdateSecret: "test-secret-key-abc123",
+// Mock the sdk module
+vi.mock("./_core/sdk", () => ({
+  sdk: {
+    authenticateRequest: vi.fn(),
   },
 }));
 
 import { updateBriefHandler } from "./scheduledBrief";
+import { sdk } from "./_core/sdk";
+import { publishBrief } from "./db";
 
 const validPayload = {
   date: "June 4, 2026",
@@ -33,9 +35,9 @@ const validPayload = {
   ],
 };
 
-function makeReq(secret: string | undefined, body = validPayload) {
+function makeReq(body = validPayload, cookie?: string) {
   return {
-    headers: { "x-brief-secret": secret },
+    headers: cookie ? { cookie } : {},
     body,
     url: "/api/scheduled/update-brief",
   } as any;
@@ -49,30 +51,40 @@ function makeRes() {
 }
 
 describe("updateBriefHandler", () => {
-  it("returns 403 when secret is missing", async () => {
-    const req = makeReq(undefined);
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("returns 403 when sdk.authenticateRequest throws (no valid cookie)", async () => {
+    (sdk.authenticateRequest as any).mockRejectedValue(new Error("Invalid session cookie"));
+    const req = makeReq();
     const res = makeRes();
     await updateBriefHandler(req, res);
     expect(res.status).toHaveBeenCalledWith(403);
     expect(res.json).toHaveBeenCalledWith(expect.objectContaining({ error: expect.stringContaining("Forbidden") }));
   });
 
-  it("returns 403 when secret is wrong", async () => {
-    const req = makeReq("wrong-secret");
+  it("returns 403 when user is not a cron (regular user session)", async () => {
+    (sdk.authenticateRequest as any).mockResolvedValue({ isCron: false, id: 1 });
+    const req = makeReq();
     const res = makeRes();
     await updateBriefHandler(req, res);
     expect(res.status).toHaveBeenCalledWith(403);
+    expect(res.json).toHaveBeenCalledWith(expect.objectContaining({ error: expect.stringContaining("cron-only") }));
   });
 
-  it("returns ok:true when secret is correct and payload is valid", async () => {
-    const req = makeReq("test-secret-key-abc123");
+  it("returns ok:true when cron auth succeeds and payload is valid", async () => {
+    (sdk.authenticateRequest as any).mockResolvedValue({ isCron: true, taskUid: "task_123" });
+    const req = makeReq();
     const res = makeRes();
     await updateBriefHandler(req, res);
-    expect(res.json).toHaveBeenCalledWith(expect.objectContaining({ ok: true }));
+    expect(res.json).toHaveBeenCalledWith(expect.objectContaining({ ok: true, briefId: 1 }));
+    expect(publishBrief).toHaveBeenCalledWith(validPayload);
   });
 
   it("returns 400 when keyJudgments is empty", async () => {
-    const req = makeReq("test-secret-key-abc123", { ...validPayload, keyJudgments: [] });
+    (sdk.authenticateRequest as any).mockResolvedValue({ isCron: true, taskUid: "task_123" });
+    const req = makeReq({ ...validPayload, keyJudgments: [] });
     const res = makeRes();
     await updateBriefHandler(req, res);
     expect(res.status).toHaveBeenCalledWith(400);
