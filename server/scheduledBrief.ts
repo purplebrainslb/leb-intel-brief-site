@@ -1,20 +1,30 @@
 import type { Request, Response } from "express";
-import { sdk } from "./_core/sdk";
 import { publishBrief, type BriefPayload } from "./db";
+import { ENV } from "./_core/env";
 
 /**
  * POST /api/scheduled/update-brief
  *
- * Called by the AGENT cron each morning. The agent researches Lebanon news
- * and POSTs a fully-structured brief payload. This handler authenticates the
- * cron session, validates the payload shape, and publishes it to the database.
+ * Called by the scheduled agent task each morning. The agent researches
+ * Lebanon news and POSTs a fully-structured brief payload.
+ *
+ * Authentication: static secret key via X-Brief-Secret header.
+ * The key is stored in the BRIEF_UPDATE_SECRET environment variable.
  */
 export async function updateBriefHandler(req: Request, res: Response) {
   try {
-    const user = await sdk.authenticateRequest(req);
+    // Authenticate via static secret key
+    const providedSecret = req.headers["x-brief-secret"];
+    const expectedSecret = ENV.briefUpdateSecret;
 
-    if (!user.isCron) {
-      return res.status(403).json({ error: "cron-only endpoint" });
+    if (!expectedSecret) {
+      console.error("[Scheduled] BRIEF_UPDATE_SECRET env var not configured");
+      return res.status(500).json({ error: "Server misconfiguration: secret not set" });
+    }
+
+    if (!providedSecret || providedSecret !== expectedSecret) {
+      console.warn("[Scheduled] update-brief: invalid or missing X-Brief-Secret header");
+      return res.status(403).json({ error: "Forbidden: invalid secret" });
     }
 
     const payload = req.body as BriefPayload;
