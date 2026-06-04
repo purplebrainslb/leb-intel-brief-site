@@ -1,29 +1,46 @@
 import type { Request, Response } from "express";
 import { publishBrief, type BriefPayload } from "./db";
 import { sdk } from "./_core/sdk";
+import { ENV } from "./_core/env";
 
 /**
  * POST /api/scheduled/update-brief
  *
- * Called by the scheduled agent task each morning. The agent researches
- * Lebanon news and POSTs a fully-structured brief payload.
+ * Called by the scheduled AGENT task each morning. Accepts two auth methods:
  *
- * Authentication: Manus platform cron cookie (app_session_id JWT).
- * The sdk.authenticateRequest() verifies the cookie and sets user.isCron = true.
- * The agent injects $SCHEDULED_TASK_COOKIE as the app_session_id cookie.
+ * 1. Manus platform cron cookie (app_session_id JWT) — used when the Manus
+ *    scheduler calls the endpoint directly via $SCHEDULED_TASK_COOKIE.
+ *
+ * 2. X-Brief-Secret header — used by the AGENT cron when it cannot reliably
+ *    inject the cron cookie. The secret is stored in BRIEF_UPDATE_SECRET env var.
  */
 export async function updateBriefHandler(req: Request, res: Response) {
   try {
-    // Authenticate via Manus platform cron cookie
-    let user;
+    let authenticated = false;
+
+    // Method 1: Manus platform cron cookie
     try {
-      user = await sdk.authenticateRequest(req);
+      const user = await sdk.authenticateRequest(req);
+      if (user.isCron) {
+        authenticated = true;
+      }
     } catch {
-      return res.status(403).json({ error: "Forbidden: invalid or missing cron session" });
+      // Not a valid cron session — fall through to secret check
     }
 
-    if (!user.isCron) {
-      return res.status(403).json({ error: "Forbidden: cron-only endpoint" });
+    // Method 2: X-Brief-Secret header (fallback for AGENT cron)
+    if (!authenticated) {
+      const providedSecret = req.headers["x-brief-secret"];
+      const expectedSecret = ENV.briefUpdateSecret;
+
+      if (expectedSecret && providedSecret === expectedSecret) {
+        authenticated = true;
+      }
+    }
+
+    if (!authenticated) {
+      console.warn("[Scheduled] update-brief: authentication failed");
+      return res.status(403).json({ error: "Forbidden: invalid credentials" });
     }
 
     const payload = req.body as BriefPayload;
@@ -43,7 +60,6 @@ export async function updateBriefHandler(req: Request, res: Response) {
     }
 
     const briefId = await publishBrief(payload);
-
     console.log(`[Scheduled] Brief published: id=${briefId}, date=${payload.date}`);
     return res.json({ ok: true, briefId });
   } catch (error: any) {
