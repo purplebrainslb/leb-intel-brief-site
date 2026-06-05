@@ -1,6 +1,6 @@
-import type { BriefSectionKey } from "../../shared/types";
-import { exaSearch, type SearchHit } from "./exa";
-import { braveSearch } from "./brave";
+import type { BriefSectionKey } from "../../shared/types.js";
+import { exaSearch, type SearchHit } from "./exa.js";
+import { braveSearch } from "./brave.js";
 
 const LEBANESE_OUTLETS = [
   "lorientlejour.com",

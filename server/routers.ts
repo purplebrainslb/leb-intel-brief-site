@@ -1,5 +1,5 @@
 import { initTRPC } from "@trpc/server";
-import { getLatestBrief, getRecentBuildRuns } from "./db";
+import { getLatestBrief, getRecentBuildRuns } from "./db.js";
 
 const t = initTRPC.create();
 

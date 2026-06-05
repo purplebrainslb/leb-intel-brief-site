@@ -12,13 +12,13 @@ import {
   type InsertBriefSection,
   type InsertSectionItem,
   type InsertOutlookItem,
-} from "../drizzle/schema";
+} from "../drizzle/schema.js";
 import type {
   BriefPayload,
   LatestBriefResponse,
   Severity,
   BriefSectionKey,
-} from "../shared/types";
+} from "../shared/types.js";
 
 let _client: ReturnType<typeof postgres> | null = null;
 let _db: ReturnType<typeof drizzle> | null = null;

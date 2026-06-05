@@ -1,7 +1,7 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { createExpressMiddleware } from "@trpc/server/adapters/express";
 import express from "express";
-import { appRouter } from "../../server/routers";
+import { appRouter } from "../../server/routers.js";
 
 export const maxDuration = 10;
 

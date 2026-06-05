@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { publishBrief, logBuildRun } from "../../server/db";
-import type { BriefPayload } from "../../shared/types";
+import { publishBrief, logBuildRun } from "../../server/db.js";
+import type { BriefPayload } from "../../shared/types.js";
 
 export const maxDuration = 30;
 

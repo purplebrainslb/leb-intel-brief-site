@@ -1,4 +1,4 @@
-import type { SearchHit } from "./exa";
+import type { SearchHit } from "./exa.js";
 
 const BRAVE_ENDPOINT = "https://api.search.brave.com/res/v1/news/search";
 

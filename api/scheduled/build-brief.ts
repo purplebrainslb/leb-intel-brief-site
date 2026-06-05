@@ -1,7 +1,7 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { searchAllSections } from "../../server/search";
-import { synthesiseBrief } from "../../server/llm/anthropic";
-import { publishBrief, logBuildRun } from "../../server/db";
+import { searchAllSections } from "../../server/search/index.js";
+import { synthesiseBrief } from "../../server/llm/anthropic.js";
+import { publishBrief, logBuildRun } from "../../server/db.js";
 
 export const maxDuration = 120;
 

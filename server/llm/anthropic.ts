@@ -4,8 +4,8 @@ import type {
   BriefSectionPayload,
   BriefSectionKey,
   Severity,
-} from "../../shared/types";
-import type { SectionSearchResult } from "../search";
+} from "../../shared/types.js";
+import type { SectionSearchResult } from "../search/index.js";
 
 let _client: Anthropic | null = null;
 function client() {

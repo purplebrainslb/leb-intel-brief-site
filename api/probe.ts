@@ -14,11 +14,11 @@ export default async function handler(_req: VercelRequest, res: VercelResponse) 
       async () => (await import("@trpc/server/adapters/express")).createExpressMiddleware,
     ],
     ["express", async () => (await import("express")).default],
-    ["../drizzle/schema", async () => (await import("../drizzle/schema")).briefs],
-    ["../server/db", async () => (await import("../server/db")).getLatestBrief],
-    ["../server/routers", async () => (await import("../server/routers")).appRouter],
-    ["../server/search", async () => (await import("../server/search")).searchAllSections],
-    ["../server/llm/anthropic", async () => (await import("../server/llm/anthropic")).synthesiseBrief],
+    ["../drizzle/schema", async () => (await import("../drizzle/schema.js")).briefs],
+    ["../server/db", async () => (await import("../server/db.js")).getLatestBrief],
+    ["../server/routers", async () => (await import("../server/routers.js")).appRouter],
+    ["../server/search", async () => (await import("../server/search/index.js")).searchAllSections],
+    ["../server/llm/anthropic", async () => (await import("../server/llm/anthropic.js")).synthesiseBrief],
   ];
 
   for (const [name, fn] of tries) {
