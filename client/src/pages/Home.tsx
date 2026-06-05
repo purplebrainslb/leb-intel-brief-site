@@ -160,23 +160,41 @@ function formatRelative(iso: string, nowMs: number) {
 }
 
 export default function Home() {
-  const { data: dbBrief, isLoading } = trpc.briefs.latest.useQuery(undefined, {
+  const { data: dbBrief, isLoading, isError } = trpc.briefs.latest.useQuery(undefined, {
     staleTime: 5 * 60 * 1000, // 5 min
-    retry: false,
+    retry: 1,
   });
 
-  const briefingData = useMemo(() => {
-    const normalized = normalizeBriefData(dbBrief);
-    return normalized ?? staticBriefingData;
-  }, [dbBrief]);
-
-  const [activeTab, setActiveTab] = useState<string>("international");
   const [now, setNow] = useState<number>(() => Date.now());
 
   useEffect(() => {
     const t = setInterval(() => setNow(Date.now()), 60_000);
     return () => clearInterval(t);
   }, []);
+
+  const briefingData = useMemo(() => {
+    const normalized = normalizeBriefData(dbBrief);
+    if (normalized) return normalized;
+    // Only fall back to static when DB explicitly returned null AND the query has settled.
+    if (isLoading) return null;
+    return staticBriefingData;
+  }, [dbBrief, isLoading]);
+
+  if (!briefingData) {
+    return <LoadingShell isError={isError} />;
+  }
+
+  return <HomeBrief briefingData={briefingData} now={now} />;
+}
+
+function HomeBrief({
+  briefingData,
+  now,
+}: {
+  briefingData: NonNullable<ReturnType<typeof normalizeBriefData>> | typeof staticBriefingData;
+  now: number;
+}) {
+  const [activeTab, setActiveTab] = useState<string>("international");
 
   const counts = useMemo(() => getSeverityCounts(briefingData as any), [briefingData]);
   const totalItems = counts.critical + counts.high + counts.medium + counts.low;
@@ -232,13 +250,6 @@ export default function Home() {
       </header>
 
       <main className="relative container py-6 sm:py-10">
-        {/* Loading shimmer */}
-        {isLoading && (
-          <div className="absolute inset-0 pointer-events-none z-10 flex items-start justify-end p-4">
-            <span className="text-[11px] font-mono text-slate-500 animate-pulse">Fetching latest brief…</span>
-          </div>
-        )}
-
         {/* HERO — Key Insights */}
         <section className="relative">
           <div className="flex flex-col gap-3 mb-5 sm:mb-7">
@@ -416,6 +427,48 @@ export default function Home() {
 }
 
 /* ----------------------------- Components ----------------------------- */
+
+function LoadingShell({ isError }: { isError: boolean }) {
+  return (
+    <div className="min-h-screen text-foreground intel-backdrop">
+      <div className="pointer-events-none fixed inset-0 intel-grid" aria-hidden />
+      <header className="sticky top-0 z-40 border-b border-white/10 bg-[oklch(0.11_0.018_255_/_0.78)] backdrop-blur-xl">
+        <div className="container py-3 sm:py-4">
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+              <BrandMark />
+              <div className="min-w-0">
+                <h1 className="text-sm sm:text-base font-semibold tracking-tight text-white truncate">
+                  Lebanon <span className="text-cyan-300">Daily Intelligence Brief</span>
+                </h1>
+                <p className="hidden sm:block text-[11px] text-slate-400 font-mono mt-0.5">
+                  Conflict tracking · Beirut, Lebanon
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+      <main className="relative container py-10 sm:py-16 flex items-center justify-center">
+        <div className="text-center">
+          {isError ? (
+            <>
+              <p className="text-amber-300 text-sm font-mono tracking-wider uppercase">Couldn't load today's brief</p>
+              <p className="mt-2 text-slate-400 text-sm">Refresh the page in a moment.</p>
+            </>
+          ) : (
+            <>
+              <div className="inline-block w-4 h-4 rounded-full border-2 border-cyan-300/30 border-t-cyan-300 animate-spin" />
+              <p className="mt-3 text-[11px] font-mono uppercase tracking-[0.18em] text-cyan-300/80">
+                Fetching today's brief
+              </p>
+            </>
+          )}
+        </div>
+      </main>
+    </div>
+  );
+}
 
 function BrandMark() {
   return (
