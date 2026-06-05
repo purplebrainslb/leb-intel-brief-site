@@ -8,7 +8,7 @@
   ],
   "functions": {
     "api/scheduled/build-brief.ts": {
-      "maxDuration": 120
+      "maxDuration": 300
     },
     "api/scheduled/update-brief.ts": {
       "maxDuration": 30

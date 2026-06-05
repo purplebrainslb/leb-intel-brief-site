@@ -3,7 +3,7 @@ import { searchAllSections } from "../../server/search/index.js";
 import { synthesiseBrief } from "../../server/llm/anthropic.js";
 import { publishBrief, logBuildRun } from "../../server/db.js";
 
-export const maxDuration = 120;
+export const maxDuration = 300;
 
 function constantTimeEqual(a: string, b: string): boolean {
   if (a.length !== b.length) return false;
