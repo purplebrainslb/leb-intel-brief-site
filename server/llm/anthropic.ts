@@ -172,7 +172,7 @@ Now produce the JSON brief.`;
 
   const response = await a.messages.create({
     model: "claude-sonnet-4-6",
-    max_tokens: 4096,
+    max_tokens: 16384,
     system: SYSTEM_PROMPT,
     tools: [tool],
     tool_choice: { type: "tool", name: "publish_brief" },
@@ -183,10 +183,21 @@ Now produce the JSON brief.`;
     (b): b is Anthropic.ToolUseBlock => b.type === "tool_use" && b.name === "publish_brief"
   );
   if (!toolUse) {
-    throw new Error("Claude did not call publish_brief tool");
+    throw new Error(
+      `Claude did not call publish_brief tool. stop_reason=${response.stop_reason}, blocks=${response.content.map((b) => b.type).join(",")}`
+    );
   }
 
   const payload = toolUse.input as BriefPayload;
+
+  if (response.stop_reason === "max_tokens") {
+    console.warn(
+      `[brief-builder] max_tokens stop. sections=${payload.sections?.length ?? 0}, judgments=${payload.keyJudgments?.length ?? 0}, outlook=${payload.outlook30Days?.length ?? 0}`
+    );
+  }
+  console.log(
+    `[brief-builder] stop_reason=${response.stop_reason}, usage_in=${response.usage.input_tokens}, usage_out=${response.usage.output_tokens}, judgments=${payload.keyJudgments?.length ?? 0}, sections=${payload.sections?.length ?? 0}, outlook=${payload.outlook30Days?.length ?? 0}`
+  );
 
   validate(payload);
 
