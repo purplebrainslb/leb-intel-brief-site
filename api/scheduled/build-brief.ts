@@ -2,6 +2,7 @@ import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { searchAllSections } from "../../server/search/index.js";
 import { synthesiseBrief } from "../../server/llm/anthropic.js";
 import { publishBrief, logBuildRun } from "../../server/db.js";
+import { notifySlack, buildFailureBlocks } from "../../server/notify/slack.js";
 
 export const maxDuration = 300;
 
@@ -75,6 +76,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const message = err instanceof Error ? err.message : String(err);
     const stack = err instanceof Error ? err.stack : undefined;
     console.error("[build-brief] failed:", err);
+    const durationMs = Date.now() - startedAt.getTime();
     try {
       await logBuildRun({
         status: "failed",
@@ -85,6 +87,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     } catch {
       /* swallow */
     }
+    await notifySlack(
+      `Lebanon Brief daily build failed: ${message.slice(0, 200)}`,
+      buildFailureBlocks({ errorMessage: message, durationMs, startedAt })
+    );
     res.status(500).json({
       ok: false,
       error: message,
