@@ -6,6 +6,10 @@
 dist/
 build/
 *.dist
+.vercel/
+
+# Dev artifacts
+.manus-logs/
 
 # Environment variables
 .env

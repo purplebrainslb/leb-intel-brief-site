@@ -196,6 +196,52 @@ function HomeBrief({
 }) {
   const [activeTab, setActiveTab] = useState<string>("international");
 
+  // Inject per-brief Article JSON-LD into <head> for SEO / AEO
+  useEffect(() => {
+    const id = "brief-article-ld";
+    let el = document.getElementById(id) as HTMLScriptElement | null;
+    if (!el) {
+      el = document.createElement("script");
+      el.id = id;
+      el.type = "application/ld+json";
+      document.head.appendChild(el);
+    }
+    const headlines = briefingData.keyJudgments.map((j: any) => j.title).slice(0, 5);
+    const ld = {
+      "@context": "https://schema.org",
+      "@type": "NewsArticle",
+      headline: `Lebanon Daily Intelligence Brief — ${briefingData.date}`,
+      datePublished: briefingData.lastUpdated,
+      dateModified: briefingData.lastUpdated,
+      inLanguage: "en",
+      url: "https://leb-intel-brief.vercel.app/",
+      mainEntityOfPage: "https://leb-intel-brief.vercel.app/",
+      isAccessibleForFree: true,
+      about: [
+        { "@type": "Place", name: "Lebanon" },
+        { "@type": "Thing", name: "Lebanon-Israel conflict" },
+      ],
+      keywords: headlines.join(", "),
+      publisher: {
+        "@id": "https://leb-intel-brief.vercel.app/#publisher",
+      },
+    };
+    el.textContent = JSON.stringify(ld);
+  }, [briefingData]);
+
+  // Keep <title> + meta description in sync with today's brief
+  useEffect(() => {
+    document.title = `Lebanon Daily Intelligence Brief — ${briefingData.date}`;
+    const desc = `Daily intelligence brief on the conflict in Lebanon and the wider region (${briefingData.date}). ${briefingData.keyJudgments?.[0]?.title ?? ""}`.slice(0, 300);
+    let meta = document.querySelector<HTMLMetaElement>('meta[name="description"]');
+    if (!meta) {
+      meta = document.createElement("meta");
+      meta.name = "description";
+      document.head.appendChild(meta);
+    }
+    meta.content = desc;
+  }, [briefingData]);
+
   const counts = useMemo(() => getSeverityCounts(briefingData as any), [briefingData]);
   const totalItems = counts.critical + counts.high + counts.medium + counts.low;
 

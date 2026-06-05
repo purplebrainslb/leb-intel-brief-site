@@ -1,0 +1,25 @@
+# Lebanon Daily Intelligence Brief
+
+> An automatically updated, daily intelligence brief on the ongoing conflict centered on Lebanon and the wider region. Written for a reader in Beirut. Refreshed every morning at 07:00 Beirut time.
+
+The brief is structured into six sections:
+
+- **Key Insights** — 5–7 top developments of the previous 24 hours.
+- **International Conflict Overview** — Iran / US / Israel / Gaza / Red Sea / Iraq, plus diplomacy.
+- **Lebanon — Military Situation** — Strikes, ground movements, evacuations, Hezbollah activity, Beirut / Dahieh / Mount Lebanon.
+- **Lebanon — Government, LAF, Internal Security** — Cabinet, LAF redeployments, UNIFIL, arrests, checkpoints.
+- **Humanitarian / Economic Situation** — Displacement, casualties, hospitals, fuel, roads, airport, border, economy.
+- **Regional Developments Directly Affecting Lebanon** — Iran, Iraqi militias, Houthis, Syria spillover.
+- **30-Day Outlook** — Forward assessment across battlefield, politics, humanitarian, regional escalation.
+
+## Sources
+
+Each item is attributed to its publisher. Local Lebanese events cite Lebanese outlets first (L'Orient Today, Naharnet, LBCI, MTV Lebanon, Al Jadeed, NBN, Al Akhbar). Regional and international events cite international sources (Reuters, AP, BBC, Al Jazeera, Times of Israel, ISW). Unconfirmed items are flagged explicitly in the text.
+
+## Data
+
+- [Latest brief (JSON)](https://leb-intel-brief.vercel.app/api/trpc/briefs.latest)
+
+## Update cadence
+
+A new brief is published once per day, around 04:00 UTC (07:00 Beirut time). If a daily build fails, the previous day's brief stays live until the next successful run.
