@@ -39,6 +39,10 @@ async function startServer() {
   registerOAuthRoutes(app);
   // Scheduled task endpoints — must be registered before Vite/static fallthrough
   app.post("/api/scheduled/update-brief", updateBriefHandler);
+  // Public brief update endpoint — protected by X-Brief-Secret header.
+  // Use this path from the scheduled agent since /api/scheduled/* is
+  // intercepted by the platform gateway and requires a cron cookie.
+  app.post("/api/brief/update", updateBriefHandler);
 
   // tRPC API
   app.use(
