@@ -1,9 +1,7 @@
 import { publishBrief, logBuildRun } from "../../server/db";
 import type { BriefPayload } from "../../shared/types";
 
-export const config = {
-  runtime: "nodejs",
-};
+export const maxDuration = 30;
 
 function constantTimeEqual(a: string, b: string): boolean {
   if (a.length !== b.length) return false;

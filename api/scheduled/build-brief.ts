@@ -2,10 +2,7 @@ import { searchAllSections } from "../../server/search";
 import { synthesiseBrief } from "../../server/llm/anthropic";
 import { publishBrief, logBuildRun } from "../../server/db";
 
-export const config = {
-  runtime: "nodejs",
-  maxDuration: 120,
-};
+export const maxDuration = 120;
 
 function isAuthorized(req: Request): boolean {
   // Vercel Cron Jobs add this header automatically when triggering /api/scheduled/*
