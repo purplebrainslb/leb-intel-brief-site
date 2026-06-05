@@ -1,258 +1,213 @@
-import { eq } from "drizzle-orm";
-import { drizzle } from "drizzle-orm/mysql2";
+import { drizzle } from "drizzle-orm/postgres-js";
+import { eq, desc } from "drizzle-orm";
+import postgres from "postgres";
 import {
-  InsertUser,
-  users,
   briefs,
   keyJudgments,
   briefSections,
   sectionItems,
   outlookItems,
-  type InsertBrief,
+  buildRuns,
   type InsertKeyJudgment,
   type InsertBriefSection,
   type InsertSectionItem,
   type InsertOutlookItem,
 } from "../drizzle/schema";
-import { ENV } from './_core/env';
+import type {
+  BriefPayload,
+  LatestBriefResponse,
+  Severity,
+  BriefSectionKey,
+} from "../shared/types";
 
+let _client: ReturnType<typeof postgres> | null = null;
 let _db: ReturnType<typeof drizzle> | null = null;
 
-// Lazily create the drizzle instance so local tooling can run without a DB.
-export async function getDb() {
-  if (!_db && process.env.DATABASE_URL) {
-    try {
-      _db = drizzle(process.env.DATABASE_URL);
-    } catch (error) {
-      console.warn("[Database] Failed to connect:", error);
-      _db = null;
+function getDb() {
+  if (!_db) {
+    const url = process.env.DATABASE_URL;
+    if (!url) {
+      throw new Error("DATABASE_URL is not set");
     }
+    _client = postgres(url, {
+      prepare: false,
+      max: 1,
+      idle_timeout: 20,
+      connect_timeout: 10,
+    });
+    _db = drizzle(_client);
   }
   return _db;
 }
 
-export async function upsertUser(user: InsertUser): Promise<void> {
-  if (!user.openId) {
-    throw new Error("User openId is required for upsert");
-  }
-
-  const db = await getDb();
-  if (!db) {
-    console.warn("[Database] Cannot upsert user: database not available");
-    return;
-  }
-
-  try {
-    const values: InsertUser = {
-      openId: user.openId,
-    };
-    const updateSet: Record<string, unknown> = {};
-
-    const textFields = ["name", "email", "loginMethod"] as const;
-    type TextField = (typeof textFields)[number];
-
-    const assignNullable = (field: TextField) => {
-      const value = user[field];
-      if (value === undefined) return;
-      const normalized = value ?? null;
-      values[field] = normalized;
-      updateSet[field] = normalized;
-    };
-
-    textFields.forEach(assignNullable);
-
-    if (user.lastSignedIn !== undefined) {
-      values.lastSignedIn = user.lastSignedIn;
-      updateSet.lastSignedIn = user.lastSignedIn;
-    }
-    if (user.role !== undefined) {
-      values.role = user.role;
-      updateSet.role = user.role;
-    } else if (user.openId === ENV.ownerOpenId) {
-      values.role = 'admin';
-      updateSet.role = 'admin';
-    }
-
-    if (!values.lastSignedIn) {
-      values.lastSignedIn = new Date();
-    }
-
-    if (Object.keys(updateSet).length === 0) {
-      updateSet.lastSignedIn = new Date();
-    }
-
-    await db.insert(users).values(values).onDuplicateKeyUpdate({
-      set: updateSet,
-    });
-  } catch (error) {
-    console.error("[Database] Failed to upsert user:", error);
-    throw error;
-  }
-}
-
-export async function getUserByOpenId(openId: string) {
-  const db = await getDb();
-  if (!db) {
-    console.warn("[Database] Cannot get user: database not available");
-    return undefined;
-  }
-
-  const result = await db.select().from(users).where(eq(users.openId, openId)).limit(1);
-
-  return result.length > 0 ? result[0] : undefined;
-}
-
-// ─── Briefing helpers ────────────────────────────────────────────────────────
-
-/**
- * Fetch the latest brief with all its nested data.
- * Returns null if no brief has been published yet.
- */
-export async function getLatestBrief() {
-  const db = await getDb();
-  if (!db) return null;
-
-  const briefRows = await db
-    .select()
-    .from(briefs)
-    .where(eq(briefs.isLatest, true))
-    .limit(1);
-
-  if (briefRows.length === 0) return null;
-  const brief = briefRows[0];
+export async function getLatestBrief(): Promise<LatestBriefResponse> {
+  const db = getDb();
+  const rows = await db.select().from(briefs).where(eq(briefs.isLatest, true)).limit(1);
+  if (rows.length === 0) return null;
+  const brief = rows[0];
 
   const [judgments, sections, outlook] = await Promise.all([
-    db.select().from(keyJudgments).where(eq(keyJudgments.briefId, brief.id)),
-    db.select().from(briefSections).where(eq(briefSections.briefId, brief.id)),
-    db.select().from(outlookItems).where(eq(outlookItems.briefId, brief.id)),
+    db
+      .select()
+      .from(keyJudgments)
+      .where(eq(keyJudgments.briefId, brief.id))
+      .orderBy(keyJudgments.sortOrder),
+    db
+      .select()
+      .from(briefSections)
+      .where(eq(briefSections.briefId, brief.id))
+      .orderBy(briefSections.sortOrder),
+    db
+      .select()
+      .from(outlookItems)
+      .where(eq(outlookItems.briefId, brief.id))
+      .orderBy(outlookItems.sortOrder),
   ]);
 
-  // Sort by sortOrder
-  judgments.sort((a, b) => a.sortOrder - b.sortOrder);
-  sections.sort((a, b) => a.sortOrder - b.sortOrder);
-  outlook.sort((a, b) => a.sortOrder - b.sortOrder);
-
-  // Fetch items for each section
   const sectionsWithItems = await Promise.all(
-    sections.map(async (section) => {
+    sections.map(async (s) => {
       const items = await db
         .select()
         .from(sectionItems)
-        .where(eq(sectionItems.sectionId, section.id));
-      items.sort((a, b) => a.sortOrder - b.sortOrder);
-      return { ...section, items };
+        .where(eq(sectionItems.sectionId, s.id))
+        .orderBy(sectionItems.sortOrder);
+      return {
+        sectionKey: s.sectionKey as BriefSectionKey,
+        title: s.title,
+        subtitle: s.subtitle ?? undefined,
+        items: items.map((i) => ({
+          heading: i.heading,
+          content: i.content,
+          source: i.source,
+          sourceUrl: i.sourceUrl,
+          severity: i.severity,
+        })),
+      };
     })
   );
 
   return {
-    ...brief,
-    keyJudgments: judgments,
+    id: brief.id,
+    date: brief.date,
+    location: brief.location,
+    lastUpdated: brief.lastUpdated,
+    source: brief.source as "auto" | "manual" | "seed",
+    createdAt: brief.createdAt.toISOString(),
+    keyJudgments: judgments.map((j) => ({
+      title: j.title,
+      description: j.description,
+      severity: j.severity as Severity,
+      region: j.region,
+    })),
     sections: sectionsWithItems,
-    outlook30Days: outlook,
+    outlook30Days: outlook.map((o) => ({
+      category: o.category,
+      assessment: o.assessment,
+      description: o.description,
+    })),
   };
 }
 
-export type BriefPayload = {
-  date: string;
-  location: string;
-  lastUpdated: string;
-  keyJudgments: Array<{
-    title: string;
-    description: string;
-    severity: "critical" | "high" | "medium" | "low";
-    region: string;
-  }>;
-  sections: Array<{
-    sectionKey: string;
-    title: string;
-    subtitle?: string;
-    items: Array<{
-      heading: string;
-      content: string;
-      source: string;
-      severity?: "critical" | "high" | "medium" | "low";
-    }>;
-  }>;
-  outlook30Days: Array<{
-    category: string;
-    assessment: string;
-    description: string;
-  }>;
-};
+export async function publishBrief(
+  payload: BriefPayload,
+  source: "auto" | "manual" | "seed" = "auto"
+): Promise<number> {
+  const db = getDb();
 
-/**
- * Atomically replace the current latest brief with a new one.
- * Marks the previous latest as not-latest, inserts the new brief and all
- * its nested rows, then marks the new brief as latest.
- */
-export async function publishBrief(payload: BriefPayload): Promise<number> {
-  const db = await getDb();
-  if (!db) throw new Error("Database not available");
+  return await db.transaction(async (tx) => {
+    await tx.update(briefs).set({ isLatest: false }).where(eq(briefs.isLatest, true));
 
-  // Clear the current latest flag
-  await db.update(briefs).set({ isLatest: false }).where(eq(briefs.isLatest, true));
+    const [inserted] = await tx
+      .insert(briefs)
+      .values({
+        date: payload.date,
+        location: payload.location ?? "Beirut, Lebanon",
+        lastUpdated: payload.lastUpdated,
+        isLatest: true,
+        source,
+      })
+      .returning({ id: briefs.id });
+    const briefId = inserted.id;
 
-  // Insert the new brief
-  const [briefResult] = await db.insert(briefs).values({
-    date: payload.date,
-    location: payload.location || "Beirut, Lebanon",
-    lastUpdated: payload.lastUpdated,
-    isLatest: true,
-  });
-  const briefId = (briefResult as any).insertId as number;
-
-  // Insert key judgments
-  if (payload.keyJudgments.length > 0) {
-    await db.insert(keyJudgments).values(
-      payload.keyJudgments.map((j, i) => ({
-        briefId,
-        sortOrder: i,
-        title: j.title,
-        description: j.description,
-        severity: j.severity,
-        region: j.region,
-      } satisfies InsertKeyJudgment))
-    );
-  }
-
-  // Insert sections and their items
-  for (let si = 0; si < payload.sections.length; si++) {
-    const section = payload.sections[si];
-    const [secResult] = await db.insert(briefSections).values({
-      briefId,
-      sectionKey: section.sectionKey,
-      title: section.title,
-      subtitle: section.subtitle ?? null,
-      sortOrder: si,
-    } satisfies InsertBriefSection);
-    const sectionId = (secResult as any).insertId as number;
-
-    if (section.items.length > 0) {
-      await db.insert(sectionItems).values(
-        section.items.map((item, ii) => ({
-          sectionId,
-          sortOrder: ii,
-          heading: item.heading,
-          content: item.content,
-          source: item.source,
-          severity: item.severity ?? null,
-        } satisfies InsertSectionItem))
+    if (payload.keyJudgments.length > 0) {
+      await tx.insert(keyJudgments).values(
+        payload.keyJudgments.map((j, i) => ({
+          briefId,
+          sortOrder: i,
+          title: j.title,
+          description: j.description,
+          severity: j.severity,
+          region: j.region,
+        } satisfies InsertKeyJudgment))
       );
     }
-  }
 
-  // Insert outlook items
-  if (payload.outlook30Days.length > 0) {
-    await db.insert(outlookItems).values(
-      payload.outlook30Days.map((o, i) => ({
-        briefId,
-        sortOrder: i,
-        category: o.category,
-        assessment: o.assessment,
-        description: o.description,
-      } satisfies InsertOutlookItem))
-    );
-  }
+    for (let si = 0; si < payload.sections.length; si++) {
+      const section = payload.sections[si];
+      const [insertedSection] = await tx
+        .insert(briefSections)
+        .values({
+          briefId,
+          sectionKey: section.sectionKey,
+          title: section.title,
+          subtitle: section.subtitle ?? null,
+          sortOrder: si,
+        } satisfies InsertBriefSection)
+        .returning({ id: briefSections.id });
+      const sectionId = insertedSection.id;
 
-  return briefId;
+      if (section.items.length > 0) {
+        await tx.insert(sectionItems).values(
+          section.items.map((item, ii) => ({
+            sectionId,
+            sortOrder: ii,
+            heading: item.heading,
+            content: item.content,
+            source: item.source,
+            sourceUrl: item.sourceUrl ?? null,
+            severity: item.severity ?? null,
+          } satisfies InsertSectionItem))
+        );
+      }
+    }
+
+    if (payload.outlook30Days.length > 0) {
+      await tx.insert(outlookItems).values(
+        payload.outlook30Days.map((o, i) => ({
+          briefId,
+          sortOrder: i,
+          category: o.category,
+          assessment: o.assessment,
+          description: o.description,
+        } satisfies InsertOutlookItem))
+      );
+    }
+
+    return briefId;
+  });
+}
+
+export async function logBuildRun(args: {
+  status: "success" | "failed";
+  briefId?: number | null;
+  searchProvider?: "exa" | "brave" | "none" | null;
+  errorMessage?: string | null;
+  startedAt: Date;
+}): Promise<void> {
+  const db = getDb();
+  const finishedAt = new Date();
+  await db.insert(buildRuns).values({
+    briefId: args.briefId ?? null,
+    startedAt: args.startedAt,
+    finishedAt,
+    status: args.status,
+    searchProvider: args.searchProvider ?? null,
+    errorMessage: args.errorMessage ?? null,
+    durationMs: finishedAt.getTime() - args.startedAt.getTime(),
+  });
+}
+
+export async function getRecentBuildRuns(limit = 20) {
+  const db = getDb();
+  return await db.select().from(buildRuns).orderBy(desc(buildRuns.startedAt)).limit(limit);
 }
