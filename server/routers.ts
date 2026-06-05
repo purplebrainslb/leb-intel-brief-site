@@ -1,29 +1,17 @@
-import { COOKIE_NAME } from "@shared/const";
-import { getSessionCookieOptions } from "./_core/cookies";
-import { systemRouter } from "./_core/systemRouter";
-import { publicProcedure, router } from "./_core/trpc";
-import { getLatestBrief } from "./db";
+import { initTRPC } from "@trpc/server";
+import { getLatestBrief, getRecentBuildRuns } from "./db";
 
-export const appRouter = router({
-  system: systemRouter,
-  auth: router({
-    me: publicProcedure.query(opts => opts.ctx.user),
-    logout: publicProcedure.mutation(({ ctx }) => {
-      const cookieOptions = getSessionCookieOptions(ctx.req);
-      ctx.res.clearCookie(COOKIE_NAME, { ...cookieOptions, maxAge: -1 });
-      return {
-        success: true,
-      } as const;
+const t = initTRPC.create();
+
+export const appRouter = t.router({
+  briefs: t.router({
+    latest: t.procedure.query(async () => {
+      return await getLatestBrief();
     }),
   }),
-
-  briefs: router({
-    /**
-     * Returns the latest published brief from the database.
-     * Returns null if no brief has been published yet (falls back to static data on the frontend).
-     */
-    latest: publicProcedure.query(async () => {
-      return getLatestBrief();
+  build: t.router({
+    recent: t.procedure.query(async () => {
+      return await getRecentBuildRuns(10);
     }),
   }),
 });

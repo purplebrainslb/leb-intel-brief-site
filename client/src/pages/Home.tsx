@@ -1,4 +1,3 @@
-import { useAuth } from "@/_core/hooks/useAuth";
 import { trpc } from "@/lib/trpc";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -146,8 +145,6 @@ function formatRelative(iso: string, nowMs: number) {
 }
 
 export default function Home() {
-  useAuth(); // ensure auth context is initialised
-
   const { data: dbBrief, isLoading } = trpc.briefs.latest.useQuery(undefined, {
     staleTime: 5 * 60 * 1000, // 5 min
     retry: false,

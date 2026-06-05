@@ -1,0 +1,26 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "vite build",
+  "outputDirectory": "dist/public",
+  "framework": null,
+  "rewrites": [
+    { "source": "/((?!api/).*)", "destination": "/index.html" }
+  ],
+  "functions": {
+    "api/scheduled/build-brief.ts": {
+      "maxDuration": 120
+    },
+    "api/scheduled/update-brief.ts": {
+      "maxDuration": 30
+    },
+    "api/trpc/[trpc].ts": {
+      "maxDuration": 10
+    }
+  },
+  "crons": [
+    {
+      "path": "/api/scheduled/build-brief",
+      "schedule": "0 4 * * *"
+    }
+  ]
+}
