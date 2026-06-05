@@ -1,22 +1,9 @@
+import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { searchAllSections } from "../../server/search";
 import { synthesiseBrief } from "../../server/llm/anthropic";
 import { publishBrief, logBuildRun } from "../../server/db";
 
 export const maxDuration = 120;
-
-function isAuthorized(req: Request): boolean {
-  // Vercel Cron Jobs add this header automatically when triggering /api/scheduled/*
-  const isVercelCron = req.headers.get("x-vercel-cron") === "1";
-  if (isVercelCron) return true;
-
-  // Manual override / external trigger
-  const headerSecret = req.headers.get("x-brief-secret");
-  const expected = process.env.BRIEF_UPDATE_SECRET;
-  if (expected && headerSecret && constantTimeEqual(headerSecret, expected)) {
-    return true;
-  }
-  return false;
-}
 
 function constantTimeEqual(a: string, b: string): boolean {
   if (a.length !== b.length) return false;
@@ -25,34 +12,44 @@ function constantTimeEqual(a: string, b: string): boolean {
   return r === 0;
 }
 
+function isAuthorized(req: VercelRequest): boolean {
+  const cronHeader = req.headers["x-vercel-cron"];
+  if (cronHeader === "1") return true;
+
+  const secret = req.headers["x-brief-secret"];
+  const expected = process.env.BRIEF_UPDATE_SECRET;
+  if (expected && typeof secret === "string" && constantTimeEqual(secret, expected)) {
+    return true;
+  }
+  return false;
+}
+
 function todayInBeirut(): string {
-  const fmt = new Intl.DateTimeFormat("en-US", {
+  return new Intl.DateTimeFormat("en-US", {
     timeZone: "Asia/Beirut",
     year: "numeric",
     month: "long",
     day: "numeric",
-  });
-  return fmt.format(new Date());
+  }).format(new Date());
 }
 
-export default async function handler(req: Request): Promise<Response> {
+export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== "POST" && req.method !== "GET") {
-    return json({ error: "method not allowed" }, 405);
+    res.status(405).json({ error: "method not allowed" });
+    return;
   }
   if (!isAuthorized(req)) {
-    return json({ error: "unauthorized" }, 401);
+    res.status(401).json({ error: "unauthorized" });
+    return;
   }
 
   const startedAt = new Date();
-
   try {
     const date = todayInBeirut();
     const lastUpdated = new Date().toISOString();
 
     const { results, provider } = await searchAllSections();
-
     const payload = await synthesiseBrief({ date, lastUpdated, results });
-
     const briefId = await publishBrief(payload, "auto");
 
     await logBuildRun({
@@ -66,7 +63,7 @@ export default async function handler(req: Request): Promise<Response> {
       `[build-brief] published id=${briefId} date="${date}" provider=${provider}`
     );
 
-    return json({
+    res.status(200).json({
       ok: true,
       briefId,
       date,
@@ -74,8 +71,9 @@ export default async function handler(req: Request): Promise<Response> {
       sectionCount: payload.sections.length,
       keyJudgmentCount: payload.keyJudgments.length,
     });
-  } catch (err: any) {
-    const message = err?.message ?? "unknown error";
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : String(err);
+    const stack = err instanceof Error ? err.stack : undefined;
     console.error("[build-brief] failed:", err);
     try {
       await logBuildRun({
@@ -85,23 +83,13 @@ export default async function handler(req: Request): Promise<Response> {
         startedAt,
       });
     } catch {
-      /* swallow secondary failure */
+      /* swallow */
     }
-    return json(
-      {
-        ok: false,
-        error: message,
-        stack: process.env.NODE_ENV !== "production" ? err?.stack : undefined,
-        timestamp: new Date().toISOString(),
-      },
-      500
-    );
+    res.status(500).json({
+      ok: false,
+      error: message,
+      stack: process.env.NODE_ENV !== "production" ? stack : undefined,
+      timestamp: new Date().toISOString(),
+    });
   }
-}
-
-function json(body: unknown, status = 200): Response {
-  return new Response(JSON.stringify(body), {
-    status,
-    headers: { "content-type": "application/json" },
-  });
 }
