@@ -190,6 +190,10 @@ Now produce the JSON brief.`;
 
   const payload = toolUse.input as BriefPayload;
 
+  // Always use our pre-formatted date/timestamp — Claude likes to coerce to ISO
+  payload.date = args.date;
+  payload.lastUpdated = args.lastUpdated;
+
   if (response.stop_reason === "max_tokens") {
     console.warn(
       `[brief-builder] max_tokens stop. sections=${payload.sections?.length ?? 0}, judgments=${payload.keyJudgments?.length ?? 0}, outlook=${payload.outlook30Days?.length ?? 0}`

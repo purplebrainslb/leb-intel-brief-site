@@ -120,6 +120,21 @@ function getSeverityCounts(data: typeof staticBriefingData) {
   return counts;
 }
 
+function formatBriefDate(s: string): string {
+  if (!s) return s;
+  // Already in "June 5, 2026" form?
+  if (/^[A-Za-z]+\s+\d{1,2},\s*\d{4}$/.test(s)) return s;
+  // ISO or anything Date can parse
+  const d = new Date(s);
+  if (Number.isNaN(d.getTime())) return s;
+  return new Intl.DateTimeFormat("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    timeZone: "UTC",
+  }).format(d);
+}
+
 function formatBeirutTime(iso: string) {
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return iso;
@@ -233,7 +248,7 @@ export default function Home() {
                 Today's Brief
               </span>
               <span className="font-mono font-medium text-white tracking-tight text-xl sm:text-2xl lg:text-3xl">
-                {briefingData.date}
+                {formatBriefDate(briefingData.date)}
               </span>
             </div>
             <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
@@ -393,7 +408,7 @@ export default function Home() {
       <footer className="relative border-t border-white/[0.06] mt-10 sm:mt-16">
         <div className="container py-5 sm:py-6 flex flex-col sm:flex-row items-center justify-between gap-2 text-[11px] font-mono text-slate-500">
           <p>Lebanon Daily Intelligence Brief · Updated 07:00 Beirut time</p>
-          <p>Data as of {briefingData.date}</p>
+          <p>Data as of {formatBriefDate(briefingData.date)}</p>
         </div>
       </footer>
     </div>
