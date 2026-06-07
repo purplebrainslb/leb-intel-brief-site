@@ -15,6 +15,18 @@ function constantTimeEqual(a: string, b: string): boolean {
 
 function isAuthorized(req: VercelRequest): boolean {
   if (req.headers["x-vercel-cron"] === "1") return true;
+
+  const authHeader = req.headers["authorization"];
+  const cronSecret = process.env.CRON_SECRET;
+  if (
+    cronSecret &&
+    typeof authHeader === "string" &&
+    authHeader.startsWith("Bearer ") &&
+    constantTimeEqual(authHeader.slice(7), cronSecret)
+  ) {
+    return true;
+  }
+
   const secret = req.headers["x-brief-secret"];
   const expected = process.env.BRIEF_UPDATE_SECRET;
   return (
@@ -23,6 +35,10 @@ function isAuthorized(req: VercelRequest): boolean {
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
+  console.log(
+    `[watchdog] invocation method=${req.method} hasAuth=${!!req.headers["authorization"]} hasVercelCron=${req.headers["x-vercel-cron"] === "1"}`
+  );
+
   if (req.method !== "POST" && req.method !== "GET") {
     res.status(405).json({ error: "method not allowed" });
     return;

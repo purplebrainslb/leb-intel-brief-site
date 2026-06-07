@@ -13,16 +13,53 @@ function constantTimeEqual(a: string, b: string): boolean {
   return r === 0;
 }
 
-function isAuthorized(req: VercelRequest): boolean {
-  const cronHeader = req.headers["x-vercel-cron"];
-  if (cronHeader === "1") return true;
+type AuthMethod = "vercel-cron-header" | "vercel-cron-bearer" | "brief-secret" | "none";
 
-  const secret = req.headers["x-brief-secret"];
-  const expected = process.env.BRIEF_UPDATE_SECRET;
-  if (expected && typeof secret === "string" && constantTimeEqual(secret, expected)) {
-    return true;
+function classifyAuth(req: VercelRequest): AuthMethod {
+  if (req.headers["x-vercel-cron"] === "1") return "vercel-cron-header";
+
+  const authHeader = req.headers["authorization"];
+  const cronSecret = process.env.CRON_SECRET;
+  if (
+    cronSecret &&
+    typeof authHeader === "string" &&
+    authHeader.startsWith("Bearer ") &&
+    constantTimeEqual(authHeader.slice(7), cronSecret)
+  ) {
+    return "vercel-cron-bearer";
   }
-  return false;
+
+  const briefSecret = req.headers["x-brief-secret"];
+  const expectedBrief = process.env.BRIEF_UPDATE_SECRET;
+  if (
+    expectedBrief &&
+    typeof briefSecret === "string" &&
+    constantTimeEqual(briefSecret, expectedBrief)
+  ) {
+    return "brief-secret";
+  }
+  return "none";
+}
+
+function summariseHeaders(req: VercelRequest): string {
+  const interesting = [
+    "user-agent",
+    "x-vercel-cron",
+    "x-vercel-id",
+    "x-forwarded-for",
+    "x-vercel-deployment-url",
+    "x-vercel-proxy-signature-ts",
+  ];
+  const seen: string[] = [];
+  for (const k of interesting) {
+    const v = req.headers[k];
+    if (v) seen.push(`${k}=${String(v).slice(0, 80)}`);
+  }
+  const authHeader = req.headers["authorization"];
+  if (typeof authHeader === "string") {
+    seen.push(`authorization=${authHeader.split(" ")[0]} (length ${authHeader.length})`);
+  }
+  return seen.join(" | ");
 }
 
 function todayInBeirut(): string {
@@ -35,16 +72,38 @@ function todayInBeirut(): string {
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
+  const startedAt = new Date();
+
+  // ALWAYS log the invocation upfront so we can audit every cron hit, even
+  // ones that get rejected by auth. The previous version returned 401 silently
+  // and we had no record of whether Vercel cron was firing at all.
+  const auth = classifyAuth(req);
+  const headerSummary = summariseHeaders(req);
+  console.log(
+    `[build-brief] invocation method=${req.method} auth=${auth} headers={${headerSummary}}`
+  );
+
   if (req.method !== "POST" && req.method !== "GET") {
     res.status(405).json({ error: "method not allowed" });
     return;
   }
-  if (!isAuthorized(req)) {
-    res.status(401).json({ error: "unauthorized" });
+
+  if (auth === "none") {
+    // Record auth failures in the same table so we can see them in build.recent
+    try {
+      await logBuildRun({
+        status: "failed",
+        searchProvider: null,
+        errorMessage: `auth rejected (no valid header) | ${headerSummary.slice(0, 800)}`,
+        startedAt,
+      });
+    } catch {
+      /* don't let logging failure mask the auth failure */
+    }
+    res.status(401).json({ error: "unauthorized", method: req.method });
     return;
   }
 
-  const startedAt = new Date();
   try {
     const date = todayInBeirut();
     const lastUpdated = new Date().toISOString();
@@ -61,13 +120,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     });
 
     console.log(
-      `[build-brief] published id=${briefId} date="${date}" provider=${provider}`
+      `[build-brief] published id=${briefId} date="${date}" provider=${provider} via auth=${auth}`
     );
 
     res.status(200).json({
       ok: true,
       briefId,
       date,
+      authMethod: auth,
       searchProvider: provider,
       sectionCount: payload.sections.length,
       keyJudgmentCount: payload.keyJudgments.length,
